@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<title>DICOM Deidentification Web Application</title>
+		<link href="data:" rel="icon">
+		<link rel="stylesheet" href="styles.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/dcmjs@latest/build/dcmjs.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/jszip@latest/dist/jszip.min.js"></script>
+		<script defer src="script.js"></script>
+
+	</head>
+	<body>
+		<div>
+			<input type="file" onchange="loadFiles()" multiple/>
+		</div>
+		<div>
+			<button id="download" onclick="saveDeidentifiedImages();">Save Deidentified Images</button>
+		</div>
+		<table id="myTable"></table>
+	</body>
+</html>
