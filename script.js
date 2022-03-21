@@ -38,14 +38,13 @@ function loadFiles() {
 		reader.onload = function() {
 			dicomDictArray[i] = dcmjs.data.DicomMessage.readFile(reader.result);
 			const datasetBeforeAnonymization = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDictArray[i].dict);
-			for (const [j, dicomTag] of dicomTagArray.entries()) {
-				dicomTagValueTable.rows[j].cells[1].textContent = datasetBeforeAnonymization[dicomTag];
-			}
 			dcmjs.anonymizer.cleanTags(dicomDictArray[i].dict);
 			const datasetAfterAnonymization = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDictArray[i].dict);
 			for (const [j, dicomTag] of dicomTagArray.entries()) {
+				dicomTagValueTable.rows[j].cells[1].textContent = datasetBeforeAnonymization[dicomTag];
 				dicomTagValueTable.rows[j].cells[2].textContent = datasetAfterAnonymization[dicomTag];
 			}
+			dicomDictArray[i].dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(datasetAfterAnonymization);
 		};
 		reader.readAsArrayBuffer(files[i]);
 	}
@@ -64,8 +63,8 @@ function saveData(blob, filename) {
 
 function saveDeidentifiedImages() {
 	const zip = new JSZip();
-	for (let i = 0; i < dicomDictArray.length; i++) {
-		zip.file(`image-${i}.dcm`, dicomDictArray[i].write());
+	for (const [i, dicomDict] of dicomDictArray.entries()) {
+		zip.file(`image-${i}.dcm`, dicomDict.write());
 	}
 	zip.generateAsync({type:'blob'})
 		.then(function (blob) {
