@@ -1,3 +1,4 @@
-th, td {
-	min-width: 100px;
+td {
+	min-width: 200px;
+	word-break: break-all;
 }
