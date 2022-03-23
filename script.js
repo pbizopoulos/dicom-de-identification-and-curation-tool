@@ -3,22 +3,236 @@
 const spanImageIndex = document.getElementById('spanImageIndex');
 const inputRangeFileIndex = document.getElementById('inputRangeFileIndex');
 const dicomTagArray = [
-	'PatientName',
-	'PatientID',
-	'PatientBirthDate',
-	'StudyDescription',
-	'ProtocolName',
-	'AccessionNumber',
-	'StudyID',
-	'StudyDate',
-	'StudyTime',
-	'SeriesDescription',
-	'SeriesDate',
-	'SeriesTime',
-	'AcquisitionDate',
-	'AcquisitionTime',
-	'ContentDate',
-	'ContentTime']
+    // please override these in specificReplaceDefaults to have useful values
+    'PatientID',
+    'PatientName',
+    // 0/3: those that appear missing in CTP
+    'SeriesDate',
+    'AccessionNumber',
+    // (valuable, but sometimes manually filled)
+    'SeriesDescription',
+    // cat 1/3: CTP: set to empty explicitely using @empty
+    'StudyTime',
+    'ContentTime',
+    'ReferringPhysicianName',
+    'PatientBirthDate',
+    'PatientSex',
+    'ClinicalTrialSiteID',
+    'ClinicalTrialSiteName',
+    'ClinicalTrialSubjectID',
+    'ClinicalTrialSubjectReadingID',
+    'ClinicalTrialTimePointID',
+    'ClinicalTrialTimePointDescription',
+    'ContrastBolusAgent',
+    'StudyID',
+    // cat 2/3: CTP: set to increment dates
+    'InstanceCreationDate',
+    'StudyDate',
+    'ContentDate',
+    'DateOfSecondaryCapture',
+    'DateOfLastCalibration',
+    'DateOfLastDetectorCalibration',
+    'FrameAcquisitionDatetime',
+    'FrameReferenceDatetime',
+    'StudyVerifiedDate',
+    'StudyReadDate',
+    'ScheduledStudyStartDate',
+    'ScheduledStudyStopDate',
+    'StudyArrivalDate',
+    'StudyCompletionDate',
+    'ScheduledAdmissionDate',
+    'ScheduledDischargeDate',
+    'DischargeDate',
+    'SPSStartDate',
+    'SPSEndDate',
+    'PPSStartDate',
+    'PPSEndDate',
+    'IssueDateOfImagingServiceRequest',
+    'VerificationDateTime',
+    'ObservationDateTime',
+    'DateTime',
+    'Date',
+    'RefDatetime',
+    // cat 3/3: CTP: set to remove using @remove
+    'AcquisitionDate',
+    'OverlayDate',
+    'CurveDate',
+    'AcquisitionDatetime',
+    'SeriesTime',
+    'AcquisitionTime',
+    'OverlayTime',
+    'CurveTime',
+    'InstitutionName',
+    'InstitutionAddress',
+    'ReferringPhysicianAddress',
+    'ReferringPhysicianPhoneNumbers',
+    'ReferringPhysiciansIDSeq',
+    'TimezoneOffsetFromUTC',
+    'StationName',
+    'StudyDescription',
+    'InstitutionalDepartmentName',
+    'PhysicianOfRecord',
+    'PhysicianOfRecordIdSeq',
+    'PerformingPhysicianName',
+    'PerformingPhysicianIdSeq',
+    'NameOfPhysicianReadingStudy',
+    'PhysicianReadingStudyIdSeq',
+    'OperatorName',
+    'OperatorsIdentificationSeq',
+    'AdmittingDiagnosisDescription',
+    'AdmittingDiagnosisCodeSeq',
+    'RefStudySeq',
+    'RefPPSSeq',
+    'RefPatientSeq',
+    'RefImageSeq',
+    'DerivationDescription',
+    'SourceImageSeq',
+    'IdentifyingComments',
+    'IssuerOfPatientID',
+    'PatientBirthTime',
+    'PatientInsurancePlanCodeSeq',
+    'PatientPrimaryLanguageCodeSeq',
+    'PatientPrimaryLanguageModifierCodeSeq',
+    'OtherPatientIDs',
+    'OtherPatientNames',
+    'OtherPatientIDsSeq',
+    'PatientBirthName',
+    'PatientAge',
+    'PatientSize',
+    'PatientWeight',
+    'PatientAddress',
+    'InsurancePlanIdentification',
+    'PatientMotherBirthName',
+    'MilitaryRank',
+    'BranchOfService',
+    'MedicalRecordLocator',
+    'MedicalAlerts',
+    'ContrastAllergies',
+    'CountryOfResidence',
+    'RegionOfResidence',
+    'PatientPhoneNumbers',
+    'EthnicGroup',
+    'Occupation',
+    'SmokingStatus',
+    'AdditionalPatientHistory',
+    'PregnancyStatus',
+    'LastMenstrualDate',
+    'PatientReligiousPreference',
+    'PatientSexNeutered',
+    'ResponsiblePerson',
+    'ResponsibleOrganization',
+    'PatientComments',
+    'DeviceSerialNumber',
+    'PlateID',
+    'GeneratorID',
+    'CassetteID',
+    'GantryID',
+    // we keep - should be SoftwareVersions anyway
+    // 'SoftwareVersion',
+    'ProtocolName',
+    'AcquisitionDeviceProcessingDescription',
+    'AcquisitionComments',
+    'DetectorID',
+    'AcquisitionProtocolDescription',
+    'ContributionDescription',
+    'ModifyingDeviceID',
+    'ModifyingDeviceManufacturer',
+    'ModifiedImageDescription',
+    'ImageComments',
+    'ImagePresentationComments',
+    'StudyIDIssuer',
+    'ScheduledStudyLocation',
+    'ScheduledStudyLocationAET',
+    'ReasonforStudy',
+    'RequestingPhysician',
+    'RequestingService',
+    'RequestedProcedureDescription',
+    'RequestedContrastAgent',
+    'StudyComments',
+    'AdmissionID',
+    'IssuerOfAdmissionID',
+    'ScheduledPatientInstitutionResidence',
+    'AdmittingDate',
+    'AdmittingTime',
+    'DischargeDiagnosisDescription',
+    'SpecialNeeds',
+    'ServiceEpisodeID',
+    'IssuerOfServiceEpisodeId',
+    'ServiceEpisodeDescription',
+    'CurrentPatientLocation',
+    'PatientInstitutionResidence',
+    'PatientState',
+    'ReferencedPatientAliasSeq',
+    'VisitComments',
+    'ScheduledStationAET',
+    'ScheduledPerformingPhysicianName',
+    'SPSDescription',
+    'ScheduledStationName',
+    'SPSLocation',
+    'PreMedication',
+    'PerformedStationAET',
+    'PerformedStationName',
+    'PerformedLocation',
+    'PerformedStationNameCodeSeq',
+    'PPSID',
+    'PPSDescription',
+    'RequestAttributesSeq',
+    'PPSComments',
+    'AcquisitionContextSeq',
+    'PatientTransportArrangements',
+    'RequestedProcedureLocation',
+    'NamesOfIntendedRecipientsOfResults',
+    'IntendedRecipientsOfResultsIDSequence',
+    'PersonAddress',
+    'PersonTelephoneNumbers',
+    'RequestedProcedureComments',
+    'ReasonForTheImagingServiceRequest',
+    'OrderEnteredBy',
+    'OrderEntererLocation',
+    'OrderCallbackPhoneNumber',
+    'ImagingServiceRequestComments',
+    'ConfidentialityPatientData',
+    'ScheduledStationNameCodeSeq',
+    'ScheduledStationGeographicLocCodeSeq',
+    'PerformedStationGeoLocCodeSeq',
+    'ScheduledHumanPerformersSeq',
+    'ActualHumanPerformersSequence',
+    'HumanPerformersOrganization',
+    'HumanPerformersName',
+    'VerifyingOrganization',
+    'VerifyingObserverName',
+    'AuthorObserverSequence',
+    'ParticipantSequence',
+    'CustodialOrganizationSeq',
+    'VerifyingObserverIdentificationCodeSeq',
+    'PersonName',
+    'ContentSeq',
+    'OverlayData',
+    'OverlayComments',
+    'IconImageSequence',
+    'TopicSubject',
+    'TopicAuthor',
+    'TopicKeyWords',
+    'TextString',
+    'Arbitrary',
+    'TextComments',
+    'ResultsIDIssuer',
+    'InterpretationRecorder',
+    'InterpretationTranscriber',
+    'InterpretationText',
+    'InterpretationAuthor',
+    'InterpretationApproverSequence',
+    'PhysicianApprovingInterpretation',
+    'InterpretationDiagnosisDescription',
+    'ResultsDistributionListSeq',
+    'DistributionName',
+    'DistributionAddress',
+    'InterpretationIdIssuer',
+    'Impressions',
+    'ResultComments',
+    'DigitalSignaturesSeq',
+    'DataSetTrailingPadding'
+];
 
 let datasetAfterAnonymizationArray = [];
 let datasetBeforeAnonymizationArray = [];
@@ -74,7 +288,7 @@ function saveDeidentifiedImages() {
 
 function saveValuesFromTableToVariables() {
 	for (const [j, dicomTag] of dicomTagArray.entries()) {
-		datasetAfterAnonymizationArray[fileIndex][dicomTag] = dicomTagValueTable.rows[j].cells[2].textContent;
+		datasetAfterAnonymizationArray[fileIndex][dicomTag] = dicomTagValueTable.rows[j].cells[3].textContent;
 		dicomDictArray[fileIndex].dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(datasetAfterAnonymizationArray[fileIndex]);
 	}
 }
@@ -86,11 +300,17 @@ function resetTable() {
 	for (const [i, dicomTag] of dicomTagArray.entries()) {
 		let row = dicomTagValueTable.insertRow(i);
 		let cellRowName = row.insertCell(0);
-		let cellOriginalValue = row.insertCell(1);
-		let cellDeidentifiedValue = row.insertCell(2);
-		let cellGlobalApplyDeidentifiedValue = row.insertCell(3);
+		let cellDICOMTag = row.insertCell(1);
+		let cellOriginalValue = row.insertCell(2);
+		let cellDeidentifiedValue = row.insertCell(3);
+		let cellGlobalApplyDeidentifiedValue = row.insertCell(4);
 		cellRowName.textContent = dicomTag;
 		cellRowName.style = 'border:1px solid;';
+		const currentTag = dcmjs.data.DicomMetaDictionary.nameMap[dicomTag];
+		if (currentTag) {
+			cellDICOMTag.textContent = currentTag.tag;
+		}
+		cellDICOMTag.style = 'border:solid;';
 		cellOriginalValue.textContent = '';
 		cellOriginalValue.style = 'border:1px solid;';
 		cellDeidentifiedValue.textContent = '';
@@ -98,7 +318,7 @@ function resetTable() {
 		cellDeidentifiedValue.contentEditable = true;
 		cellGlobalApplyDeidentifiedValue.textContent = 'Apply global';
 		cellGlobalApplyDeidentifiedValue.style = 'background-color:#D3D3D3;border:solid;';
-		cellGlobalApplyDeidentifiedValue.addEventListener("click",function(){
+		cellGlobalApplyDeidentifiedValue.addEventListener('click',function(){
 			const selectedDicomTag = dicomTagArray[this.parentNode.rowIndex];
 			const selectedGlobalValue = datasetAfterAnonymizationArray[fileIndex][selectedDicomTag];
 			for (const [i, datasetAfterAnonymization] of datasetAfterAnonymizationArray.entries()) {
@@ -126,8 +346,8 @@ inputRangeFileIndex.oninput = function() {
 	fileIndex = parseInt(this.value);
 	spanFileIndex.textContent = `${fileIndex}/${numFiles}`;
 	for (const [j, dicomTag] of dicomTagArray.entries()) {
-		dicomTagValueTable.rows[j].cells[1].textContent = datasetBeforeAnonymizationArray[fileIndex][dicomTag];
-		dicomTagValueTable.rows[j].cells[2].textContent = datasetAfterAnonymizationArray[fileIndex][dicomTag];
+		dicomTagValueTable.rows[j].cells[2].textContent = datasetBeforeAnonymizationArray[fileIndex][dicomTag];
+		dicomTagValueTable.rows[j].cells[3].textContent = datasetAfterAnonymizationArray[fileIndex][dicomTag];
 	}
 }
 
