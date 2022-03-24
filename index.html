@@ -15,16 +15,16 @@
 			<input type="file" onchange="loadFiles()" multiple/>
 		</div>
 		<div>
-			<button id="download" onclick="saveDeidentifiedImages();">Save Deidentified Images</button>
+			<button id="buttonSaveDeidentifiedFiles" onclick="saveDeidentifiedFiles();">Save Deidentified Files</button>
 		</div>
-		<input type="range" min="0" max="0" step="1" id="inputRangeFileIndex">
+		<input id="inputRangeFileIndex" type="range" min="0" max="0" step="1">
 		<div>
 			Index: <span id="spanFileIndex"></span>
 		</div>
 		<div>
-			<input type="checkbox" id="checkboxShowEmptyTags">
-			<label for="checkboxShowEmptyTags">Show empty tags</label>
+			<input type="checkbox" id="inputCheckboxShowEmptyOriginalTags">
+			<label for="inputCheckboxShowEmptyOriginalTags">Show empty original tags</label>
 		</div>
-		<table id="dicomTagValueTable"></table>
+		<table id="tableDICOMTagValues"></table>
 	</body>
 </html>
