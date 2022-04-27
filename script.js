@@ -52,6 +52,7 @@ function saveData(blob, filename) {
 }
 
 function saveDeidentifiedFiles() {
+	disableUI(true);
 	const zip = new JSZip();
 	for (const [i, dicomDict] of dicomDictArray.entries()) {
 		zip.file(`file-${i}.dcm`, dicomDict.write());
@@ -59,6 +60,7 @@ function saveDeidentifiedFiles() {
 	zip.generateAsync({type:'blob'})
 		.then(function (blob) {
 			saveData(blob, 'files.zip');
+			disableUI(false);
 		});
 }
 
@@ -102,6 +104,7 @@ function resetTable() {
 			const selectedGlobalValue = datasetAfterAnonymizationArray[fileIndex][selectedDicomTag];
 			for (const [i, datasetAfterAnonymization] of datasetAfterAnonymizationArray.entries()) {
 				datasetAfterAnonymization[selectedDicomTag] = selectedGlobalValue;
+				dicomDictArray[i].dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(datasetAfterAnonymizationArray[i]);
 			}
 			saveValuesFromRowToVariables(event.target.parentNode.rowIndex);
 		});
@@ -114,6 +117,7 @@ function resetTable() {
 function disableUI(argument) {
 	buttonSaveDeidentifiedFiles.disabled = argument;
 	inputCheckboxShowEmptyOriginalTags.disabled = argument;
+	inputLoadFiles.disabled = argument;
 	inputRangeFileIndex.disabled = argument;
 }
 
@@ -156,3 +160,4 @@ inputCheckboxShowEmptyOriginalTags.onclick = function() {
 disableUI(true);
 resetData();
 resetTable();
+inputLoadFiles.disabled = false;

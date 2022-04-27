@@ -8,7 +8,7 @@ const puppeteer = require('puppeteer');
 	const browser = await puppeteer.launch({ headless: true });
 	const page = await browser.newPage();
 	await page.goto(`file:${path.join(__dirname, '../index.html')}`);
-	await page.waitForSelector('#inputLoadFiles');
+	await page.waitForSelector('#inputLoadFiles:not([disabled])');
 	const inputUploadHandle = await page.$('#inputLoadFiles');
 	const dicomDir = 'artifacts/DICOM/'
 	const dicomFileNameArray = fs.readdirSync(dicomDir);
