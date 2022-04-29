@@ -2,3 +2,33 @@ td {
 	width:200px;
 	word-break: break-all;
 }
+
+.tooltip {
+	border-bottom: dotted black;
+	display: inline-block;
+	position: absolute;
+	right: 5%;
+	top: 5%;
+}
+
+.tooltip .tooltiptext {
+	background-color: white;
+	border: solid black;
+	font-size: 10px;
+	margin-left: -120%;
+	position: absolute;
+	text-align: center;
+	top: 100%;
+	visibility: hidden;
+	width: 120px;
+	z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+	visibility: visible;
+}
+
+.controlpanel {
+	display: inline-block;
+	vertical-align: middle;
+}

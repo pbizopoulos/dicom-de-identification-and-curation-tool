@@ -3,28 +3,42 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<title>DICOM Deidentification Web Application</title>
-		<link href="data:" rel="icon">
-		<link rel="stylesheet" href="styles.css">
+		<link href="favicon-32x32.png" rel="icon">
+		<link href="styles.css" rel="stylesheet">
 		<script defer src="https://cdn.jsdelivr.net/npm/dcmjs@latest/build/dcmjs.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/jszip@latest/dist/jszip.min.js"></script>
 		<script defer src="script.js"></script>
 
 	</head>
 	<body>
-		<div>
-			<input type="file" id="inputLoadFiles" onchange="loadFiles()" multiple/>
+		<div style="height:50px;">
+			<div>
+				<a href="https://incisive-project.eu">
+					<img src="incisive-header-logo.svg" loading="lazy">
+				</a>
+			</div>
+			<div class="tooltip">Information
+				<span class="tooltiptext">NOT FOR MEDICAL USE. This is the DICOM De-identification client-side web application implemented under the INCISIVE project. Loaded data do not leave the device.</span>
+			</div>
 		</div>
+		<hr>
 		<div>
-			<button id="buttonSaveDeidentifiedFiles" onclick="saveDeidentifiedFiles();">Save Deidentified Files</button>
+			<div class="controlpanel">
+				<input type="file" id="loadFilesInputFile" onchange="loadFiles()" multiple/>
+			</div>
+			<div class="controlpanel">
+				File index: <span id="fileCurrentIndexSpan"></span>
+				<input id="fileCurrentIndexInputRange" type="range" min="0" max="0" step="1">
+			</div>
+			<div class="controlpanel">
+				<input type="checkbox" id="showEmptyOriginalTagsInputCheckbox">
+				<label for="showEmptyOriginalTagsInputCheckbox">Show empty original tags</label>
+			</div>
+			<div class="controlpanel">
+				<button id="saveDeidentifiedFilesButton" onclick="saveDeidentifiedFiles();">Save deidentified files</button>
+			</div>
 		</div>
-		<input id="inputRangeFileIndex" type="range" min="0" max="0" step="1">
-		<div>
-			Index: <span id="spanFileIndex"></span>
-		</div>
-		<div>
-			<input type="checkbox" id="inputCheckboxShowEmptyOriginalTags">
-			<label for="inputCheckboxShowEmptyOriginalTags">Show empty original tags</label>
-		</div>
-		<table id="tableDICOMTagValues"></table>
+		<hr>
+		<table id="dicomTagValuesTable"></table>
 	</body>
 </html>
