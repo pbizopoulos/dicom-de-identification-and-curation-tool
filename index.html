@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8"/>
-		<title>DICOM Deidentification Web Application</title>
+		<meta charset="utf-8"/>
+		<title>DICOM De-identification Web Application</title>
 		<link href="favicon-32x32.png" rel="icon">
 		<link href="styles.css" rel="stylesheet">
 		<script defer src="https://cdn.jsdelivr.net/npm/dcmjs@latest/build/dcmjs.min.js"></script>
@@ -11,31 +11,31 @@
 
 	</head>
 	<body>
-		<div style="height:50px;">
-			<div>
+		<div>
+			<div class="inline">
 				<a href="https://incisive-project.eu">
-					<img src="incisive-header-logo.svg" loading="lazy">
+					<img src="incisive-header-logo.svg" width="80px">
 				</a>
 			</div>
-			<div class="tooltip">Information
-				<span class="tooltiptext">NOT FOR MEDICAL USE. This is the DICOM De-identification client-side web application implemented under the INCISIVE project. Loaded data do not leave the device.</span>
+			<div class="inline">
+				<div style="color:#2386ff;font-weight:bold;">DICOM De-identification</div>
 			</div>
 		</div>
 		<hr>
 		<div>
-			<div class="controlpanel">
-				<input type="file" id="loadFilesInputFile" onchange="loadFiles()" multiple/>
+			<div class="inline">
+				<input type="file" id="loadFilesInputFile" multiple/>
 			</div>
-			<div class="controlpanel">
+			<div class="inline">
 				File index: <span id="fileCurrentIndexSpan"></span>
 				<input id="fileCurrentIndexInputRange" type="range" min="0" max="0" step="1">
 			</div>
-			<div class="controlpanel">
+			<div class="inline">
 				<input type="checkbox" id="showEmptyOriginalTagsInputCheckbox">
 				<label for="showEmptyOriginalTagsInputCheckbox">Show empty original tags</label>
 			</div>
-			<div class="controlpanel">
-				<button id="saveDeidentifiedFilesButton" onclick="saveDeidentifiedFiles();">Save deidentified files</button>
+			<div class="inline">
+				<button id="saveDeidentifiedFilesButton">Save de-identified files</button>
 			</div>
 		</div>
 		<hr>

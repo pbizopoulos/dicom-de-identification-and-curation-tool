@@ -3,9 +3,9 @@
 const dicomTagArray = Object.keys(dcmjs.data.DicomMetaDictionary.nameMap);
 const fileCurrentIndexInputRange = document.getElementById('fileCurrentIndexInputRange');
 const fileCurrentIndexSpan = document.getElementById('fileCurrentIndexSpan');
+const loadFilesInputFile = document.getElementById('loadFilesInputFile');
 const saveDeidentifiedFilesButton = document.getElementById('saveDeidentifiedFilesButton');
 const showEmptyOriginalTagsInputCheckbox = document.getElementById('showEmptyOriginalTagsInputCheckbox');
-
 let datasetAfterAnonymizationArray = [];
 let datasetBeforeAnonymizationArray = [];
 let dicomDictArray = [];
@@ -14,33 +14,8 @@ let filesNum = 0;
 
 function disableUI(argument) {
 	fileCurrentIndexInputRange.disabled = argument;
-	loadFilesInputFile.disabled = argument;
 	saveDeidentifiedFilesButton.disabled = argument;
 	showEmptyOriginalTagsInputCheckbox.disabled = argument;
-}
-
-function loadFiles() {
-	const files = event.currentTarget.files;
-	if (files.length === 0) {
-		return;
-	}
-	filesNum = files.length;
-	fileCurrentIndexInputRange.max = filesNum - 1;
-	for (let i = 0; i < filesNum; i++) {
-		const reader = new FileReader();
-		reader.onload = function() {
-			dicomDictArray[i] = dcmjs.data.DicomMessage.readFile(reader.result);
-			datasetBeforeAnonymizationArray[i] = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDictArray[i].dict);
-			dcmjs.anonymizer.cleanTags(dicomDictArray[i].dict);
-			datasetAfterAnonymizationArray[i] = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDictArray[i].dict);
-			if (i === files.length - 1) {
-				fileCurrentIndexInputRange.oninput();
-				showEmptyOriginalTagsInputCheckbox.onclick();
-				disableUI(false);
-			}
-		};
-		reader.readAsArrayBuffer(files[i]);
-	}
 }
 
 function resetTable() {
@@ -61,7 +36,7 @@ function resetTable() {
 			dicomTagCell.style.fontWeight = 'bold';
 			dicomTagCellValueOriginal.textContent = 'Original value';
 			dicomTagCellValueOriginal.style.fontWeight = 'bold';
-			dicomTagCellValueDeidentified.textContent = 'Deidentified value';
+			dicomTagCellValueDeidentified.textContent = 'De-identified value';
 			dicomTagCellValueDeidentified.style.fontWeight = 'bold';
 			applyGlobalValueDeidentifiedCell.textContent = 'Global button';
 			applyGlobalValueDeidentifiedCell.style.fontWeight = 'bold';
@@ -106,30 +81,6 @@ function resetVariables() {
 	filesNum = 0;
 }
 
-function saveData(blob, filename) {
-	const a = document.createElement('a');
-	document.body.appendChild(a);
-	a.style = 'display: none';
-	const url = window.URL.createObjectURL(blob);
-	a.href = url;
-	a.download = filename;
-	a.click();
-	window.URL.revokeObjectURL(url);
-}
-
-function saveDeidentifiedFiles() {
-	disableUI(true);
-	const zip = new JSZip();
-	for (const [i, dicomDict] of dicomDictArray.entries()) {
-		zip.file(`file-${i}.dcm`, dicomDict.write());
-	}
-	zip.generateAsync({type:'blob'})
-		.then(function (blob) {
-			saveData(blob, 'files.zip');
-			disableUI(false);
-		});
-}
-
 function saveValuesFromRowToVariables(rowIndex) {
 	if (!(Array.isArray(datasetAfterAnonymizationArray[fileCurrentIndex][dicomTagArray[rowIndex]]))) {
 		datasetAfterAnonymizationArray[fileCurrentIndex][dicomTagArray[rowIndex]] = dicomTagValuesTable.rows[rowIndex].cells[3].textContent;
@@ -147,6 +98,53 @@ fileCurrentIndexInputRange.oninput = function() {
 		dicomTagValuesTable.rows[i].cells[2].textContent = datasetBeforeAnonymizationArray[fileCurrentIndex][dicomTag];
 		dicomTagValuesTable.rows[i].cells[3].textContent = datasetAfterAnonymizationArray[fileCurrentIndex][dicomTag];
 	}
+}
+
+loadFilesInputFile.onchange = function() {
+	const files = event.currentTarget.files;
+	if (files.length === 0) {
+		return;
+	}
+	filesNum = files.length;
+	fileCurrentIndexInputRange.max = filesNum - 1;
+	for (let i = 0; i < filesNum; i++) {
+		const reader = new FileReader();
+		reader.onload = function() {
+			dicomDictArray[i] = dcmjs.data.DicomMessage.readFile(reader.result);
+			datasetBeforeAnonymizationArray[i] = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDictArray[i].dict);
+			dcmjs.anonymizer.cleanTags(dicomDictArray[i].dict);
+			delete dicomDictArray[i].dict['00400245'] // Only for review.
+			delete dicomDictArray[i].dict['0018A001'].Value[0]['0018A003'] // Only for review.
+			dicomDictArray[i].dict['0018A001'].Value[0]['00081010'].Value = [''] // Only for review.
+			datasetAfterAnonymizationArray[i] = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDictArray[i].dict);
+			if (i === files.length - 1) {
+				fileCurrentIndexInputRange.oninput();
+				showEmptyOriginalTagsInputCheckbox.onclick();
+				disableUI(false);
+			}
+		};
+		reader.readAsArrayBuffer(files[i]);
+	}
+}
+
+saveDeidentifiedFilesButton.onclick = function() {
+	disableUI(true);
+	const zip = new JSZip();
+	for (const [i, dicomDict] of dicomDictArray.entries()) {
+		zip.file(`file-${i}.dcm`, dicomDict.write());
+	}
+	zip.generateAsync({type:'blob'})
+		.then(function (blob) {
+			const a = document.createElement('a');
+			document.body.appendChild(a);
+			a.style = 'display: none';
+			const url = window.URL.createObjectURL(blob);
+			a.href = url;
+			a.download = 'files.zip';
+			a.click();
+			window.URL.revokeObjectURL(url);
+			disableUI(false);
+		});
 }
 
 showEmptyOriginalTagsInputCheckbox.onclick = function() {
@@ -168,4 +166,3 @@ showEmptyOriginalTagsInputCheckbox.onclick = function() {
 disableUI(true);
 resetVariables();
 resetTable();
-loadFilesInputFile.disabled = false;
