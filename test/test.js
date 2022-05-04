@@ -31,8 +31,7 @@ const puppeteer = require('puppeteer');
 	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
 	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
 	await page.screenshot({
-		path: 'artifacts/test.png',
-		fullpage: true
+		path: 'artifacts/puppeteer-screenshot.png'
 	});
 	await page.close();
 	await browser.close();

@@ -8,7 +8,6 @@
 		<script defer src="https://cdn.jsdelivr.net/npm/dcmjs@latest/build/dcmjs.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/jszip@latest/dist/jszip.min.js"></script>
 		<script defer src="script.js"></script>
-
 	</head>
 	<body>
 		<div>
@@ -24,14 +23,14 @@
 		<hr>
 		<div>
 			<div class="inline">
-				<input type="file" id="loadFilesInputFile" multiple/>
+				<input id="loadFilesInputFile" type="file" multiple/>
 			</div>
 			<div class="inline">
 				File index: <span id="fileCurrentIndexSpan"></span>
-				<input id="fileCurrentIndexInputRange" type="range" min="0" max="0" step="1">
+				<input id="fileCurrentIndexInputRange" max="0" min="0" step="1" type="range">
 			</div>
 			<div class="inline">
-				<input type="checkbox" id="showEmptyOriginalTagsInputCheckbox">
+				<input id="showEmptyOriginalTagsInputCheckbox" type="checkbox">
 				<label for="showEmptyOriginalTagsInputCheckbox">Show empty original tags</label>
 			</div>
 			<div class="inline">
