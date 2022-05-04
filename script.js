@@ -82,7 +82,7 @@ function resetVariables() {
 }
 
 function saveValuesFromRowToVariables(rowIndex) {
-	if (!(Array.isArray(datasetAfterAnonymizationArray[fileCurrentIndex][dicomTagArray[rowIndex]]))) {
+	if (!(Array.isArray(datasetBeforeAnonymizationArray[fileCurrentIndex][dicomTagArray[rowIndex]]))) {
 		datasetAfterAnonymizationArray[fileCurrentIndex][dicomTagArray[rowIndex]] = dicomTagValuesTable.rows[rowIndex].cells[3].textContent;
 		dicomDictArray[fileCurrentIndex].dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(datasetAfterAnonymizationArray[fileCurrentIndex]);
 	}
@@ -114,8 +114,9 @@ loadFilesInputFile.onchange = function() {
 			datasetBeforeAnonymizationArray[i] = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDictArray[i].dict);
 			dcmjs.anonymizer.cleanTags(dicomDictArray[i].dict);
 			delete dicomDictArray[i].dict['00400245'] // Only for review.
-			delete dicomDictArray[i].dict['0018A001'].Value[0]['0018A003'] // Only for review.
-			dicomDictArray[i].dict['0018A001'].Value[0]['00081010'].Value = [''] // Only for review.
+			delete dicomDictArray[i].dict['00081140'] // Only for review.
+			// delete dicomDictArray[i].dict['0018A001'].Value[0]['0018A003'] // Only for review.
+			// dicomDictArray[i].dict['0018A001'].Value[0]['00081010'].Value = [''] // Only for review.
 			datasetAfterAnonymizationArray[i] = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDictArray[i].dict);
 			if (i === files.length - 1) {
 				fileCurrentIndexInputRange.oninput();

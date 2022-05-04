@@ -10,7 +10,7 @@ const puppeteer = require('puppeteer');
 	await page.goto(`file:${path.join(__dirname, '../index.html')}`);
 	await page.waitForSelector('#loadFilesInputFile:not([disabled])');
 	const inputUploadHandle = await page.$('#loadFilesInputFile');
-	const dicomDir = 'artifacts/DICOM/'
+	const dicomDir = 'artifacts/DICOM/';
 	const dicomFileNameArray = fs.readdirSync(dicomDir);
 	const dicomFilePathArray = dicomFileNameArray.map(file => `${dicomDir}${file}`);
 	inputUploadHandle.uploadFile(...dicomFilePathArray);
@@ -18,18 +18,18 @@ const puppeteer = require('puppeteer');
 	await page.evaluate(() => {
 		document.querySelector('#fileCurrentIndexInputRange').value = 42;
 		document.querySelector('#fileCurrentIndexInputRange').oninput();
-		document.querySelector('#showEmptyOriginalTagsInputCheckbox').click();
-		document.querySelector('#showEmptyOriginalTagsInputCheckbox').click();
 	});
-	await page.waitForXPath('/html/body/table/tbody/tr[57]/td[4]').then(selector => selector.click())
+	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
+	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
+	await page.waitForXPath('/html/body/table/tbody/tr[57]/td[4]').then(selector => selector.click());
 	await page.keyboard.type('20220101');
-	await page.waitForXPath('/html/body/table/tbody/tr[57]/td[5]').then(selector => selector.click())
+	await page.waitForXPath('/html/body/table/tbody/tr[57]/td[5]').then(selector => selector.click());
 	await page.evaluate(() => {
 		document.querySelector('#fileCurrentIndexInputRange').value = 150;
 		document.querySelector('#fileCurrentIndexInputRange').oninput();
-		document.querySelector('#showEmptyOriginalTagsInputCheckbox').click();
-		document.querySelector('#showEmptyOriginalTagsInputCheckbox').click();
 	});
+	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
+	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
 	await page.screenshot({
 		path: 'artifacts/test.png',
 		fullpage: true
