@@ -4,6 +4,7 @@ const dicomTagArray = Object.keys(dcmjs.data.DicomMetaDictionary.nameMap);
 const fileCurrentIndexInputRange = document.getElementById('fileCurrentIndexInputRange');
 const fileCurrentIndexSpan = document.getElementById('fileCurrentIndexSpan');
 const loadFilesInputFile = document.getElementById('loadFilesInputFile');
+const saveDeidentifiedFilesAsZipButton = document.getElementById('saveDeidentifiedFilesAsZipButton');
 const saveDeidentifiedFilesButton = document.getElementById('saveDeidentifiedFilesButton');
 const showEmptyOriginalTagsInputCheckbox = document.getElementById('showEmptyOriginalTagsInputCheckbox');
 let datasetAfterAnonymizationArray = [];
@@ -14,6 +15,7 @@ let filesNum = 0;
 
 function disableUI(argument) {
 	fileCurrentIndexInputRange.disabled = argument;
+	saveDeidentifiedFilesAsZipButton.disabled = argument;
 	saveDeidentifiedFilesButton.disabled = argument;
 	showEmptyOriginalTagsInputCheckbox.disabled = argument;
 }
@@ -81,6 +83,17 @@ function resetVariables() {
 	filesNum = 0;
 }
 
+function saveData(blob, filename) {
+	const a = document.createElement('a');
+	document.body.appendChild(a);
+	a.style = 'display: none';
+	const url = window.URL.createObjectURL(blob);
+	a.href = url;
+	a.download = filename;
+	a.click();
+	window.URL.revokeObjectURL(url);
+}
+
 function saveValuesFromRowToVariables(rowIndex) {
 	if (!(Array.isArray(datasetBeforeAnonymizationArray[fileCurrentIndex][dicomTagArray[rowIndex]]))) {
 		datasetAfterAnonymizationArray[fileCurrentIndex][dicomTagArray[rowIndex]] = dicomTagValuesTable.rows[rowIndex].cells[3].textContent;
@@ -128,7 +141,7 @@ loadFilesInputFile.onchange = function() {
 	}
 }
 
-saveDeidentifiedFilesButton.onclick = function() {
+saveDeidentifiedFilesAsZipButton.onclick = function() {
 	disableUI(true);
 	const zip = new JSZip();
 	for (const [i, dicomDict] of dicomDictArray.entries()) {
@@ -136,16 +149,18 @@ saveDeidentifiedFilesButton.onclick = function() {
 	}
 	zip.generateAsync({type:'blob'})
 		.then(function (blob) {
-			const a = document.createElement('a');
-			document.body.appendChild(a);
-			a.style = 'display: none';
-			const url = window.URL.createObjectURL(blob);
-			a.href = url;
-			a.download = 'files.zip';
-			a.click();
-			window.URL.revokeObjectURL(url);
+			saveData(blob, 'files.zip');
 			disableUI(false);
 		});
+}
+
+saveDeidentifiedFilesButton.onclick = function() {
+	disableUI(true);
+	for (const [i, dicomDict] of dicomDictArray.entries()) {
+		const blob = new Blob([dicomDict.write()]);
+		saveData(blob, `file-${i}.dcm`);
+	}
+	disableUI(false);
 }
 
 showEmptyOriginalTagsInputCheckbox.onclick = function() {
