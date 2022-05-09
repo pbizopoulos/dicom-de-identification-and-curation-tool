@@ -1,0 +1,23 @@
+DICOM De-Identification tool web application:
+
+A web-based client-side DICOM de-identification tool.
+It has the following advantages:
+- Privacy (data do not leave the device)
+- No installation needed (only a modern browser is needed)
+
+
+Usage instructions for the end-user:
+1) Visit https://pbizopoulos.github.io/dicom-de-identification-web-application .
+2) Load your data.
+3) Save the de-identified data.
+
+
+Requirements for the developer:
+- POSIX-oriented operating system https://en.wikipedia.org/wiki/POSIX#POSIX-oriented_operating_systems
+- Git (Any version) https://git-scm.com/downloads
+- GNU Make (>= 3.79) https://www.gnu.org/software/make/
+- npm https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+
+Instructions for the developer:
+git clone https://github.com/pbizopoulos/dicom-de-identification-web-application
+make

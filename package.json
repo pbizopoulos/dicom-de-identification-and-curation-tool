@@ -1,0 +1,6 @@
+{
+	"main": "test.js",
+	"dependencies": {
+		"puppeteer": "^13.7.0"
+	}
+}

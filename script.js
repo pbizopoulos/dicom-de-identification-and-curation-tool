@@ -1,8 +1,8 @@
 'use strict';
 
 const dicomTagArray = Object.keys(dcmjs.data.DicomMetaDictionary.nameMap);
-const fileCurrentIndexInputRange = document.getElementById('fileCurrentIndexInputRange');
-const fileCurrentIndexSpan = document.getElementById('fileCurrentIndexSpan');
+const fileIndexCurrentInputRange = document.getElementById('fileIndexCurrentInputRange');
+const fileIndexCurrentSpan = document.getElementById('fileIndexCurrentSpan');
 const loadFilesInputFile = document.getElementById('loadFilesInputFile');
 const saveDeidentifiedFilesAsZipButton = document.getElementById('saveDeidentifiedFilesAsZipButton');
 const saveDeidentifiedFilesButton = document.getElementById('saveDeidentifiedFilesButton');
@@ -10,11 +10,11 @@ const showEmptyOriginalTagsInputCheckbox = document.getElementById('showEmptyOri
 let datasetAfterAnonymizationArray = [];
 let datasetBeforeAnonymizationArray = [];
 let dicomDictArray = [];
-let fileCurrentIndex = 0;
+let fileIndexCurrent = 0;
 let filesNum = 0;
 
 function disableUI(argument) {
-	fileCurrentIndexInputRange.disabled = argument;
+	fileIndexCurrentInputRange.disabled = argument;
 	saveDeidentifiedFilesAsZipButton.disabled = argument;
 	saveDeidentifiedFilesButton.disabled = argument;
 	showEmptyOriginalTagsInputCheckbox.disabled = argument;
@@ -56,15 +56,15 @@ function resetTable() {
 			applyGlobalValueDeidentifiedCell.textContent = 'Apply global';
 			applyGlobalValueDeidentifiedCell.style.backgroundColor = 'lightgray';
 			applyGlobalValueDeidentifiedCell.style.borderStyle = 'groove';
-			applyGlobalValueDeidentifiedCell.addEventListener('click', function(){
+			applyGlobalValueDeidentifiedCell.onclick = function() {
 				const dicomTagSelected = dicomTagArray[this.parentNode.rowIndex];
-				const globalValueSelected = datasetAfterAnonymizationArray[fileCurrentIndex][dicomTagSelected];
+				const globalValueSelected = datasetAfterAnonymizationArray[fileIndexCurrent][dicomTagSelected];
 				for (const [i, datasetAfterAnonymization] of datasetAfterAnonymizationArray.entries()) {
 					datasetAfterAnonymization[dicomTagSelected] = globalValueSelected;
 					dicomDictArray[i].dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(datasetAfterAnonymizationArray[i]);
 				}
 				saveValuesFromRowToVariables(event.target.parentNode.rowIndex);
-			});
+			}
 		}
 	}
 	dicomTagValuesTable.tBodies[0].onkeyup = function() {
@@ -76,10 +76,10 @@ function resetVariables() {
 	datasetAfterAnonymizationArray = [];
 	datasetBeforeAnonymizationArray = [];
 	dicomDictArray = [];
-	fileCurrentIndex = 0;
-	fileCurrentIndexInputRange.max = 0;
-	fileCurrentIndexInputRange.value = 0;
-	fileCurrentIndexSpan.textContent = '';
+	fileIndexCurrent = 0;
+	fileIndexCurrentInputRange.max = 0;
+	fileIndexCurrentInputRange.value = 0;
+	fileIndexCurrentSpan.textContent = '';
 	filesNum = 0;
 }
 
@@ -95,21 +95,21 @@ function saveData(blob, filename) {
 }
 
 function saveValuesFromRowToVariables(rowIndex) {
-	if (!(Array.isArray(datasetBeforeAnonymizationArray[fileCurrentIndex][dicomTagArray[rowIndex]]))) {
-		datasetAfterAnonymizationArray[fileCurrentIndex][dicomTagArray[rowIndex]] = dicomTagValuesTable.rows[rowIndex].cells[3].textContent;
-		dicomDictArray[fileCurrentIndex].dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(datasetAfterAnonymizationArray[fileCurrentIndex]);
+	if (!(Array.isArray(datasetBeforeAnonymizationArray[fileIndexCurrent][dicomTagArray[rowIndex]]))) {
+		datasetAfterAnonymizationArray[fileIndexCurrent][dicomTagArray[rowIndex]] = dicomTagValuesTable.rows[rowIndex].cells[3].textContent;
+		dicomDictArray[fileIndexCurrent].dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(datasetAfterAnonymizationArray[fileIndexCurrent]);
 	}
 }
 
-fileCurrentIndexInputRange.oninput = function() {
-	fileCurrentIndex = parseInt(this.value);
-	fileCurrentIndexSpan.textContent = `${fileCurrentIndex}/${filesNum}`;
+fileIndexCurrentInputRange.oninput = function() {
+	fileIndexCurrent = parseInt(this.value);
+	fileIndexCurrentSpan.textContent = `${fileIndexCurrent}/${filesNum}`;
 	for (const [i, dicomTag] of dicomTagArray.entries()) {
 		if (i === 0) {
 			continue;
 		}
-		dicomTagValuesTable.rows[i].cells[2].textContent = datasetBeforeAnonymizationArray[fileCurrentIndex][dicomTag];
-		dicomTagValuesTable.rows[i].cells[3].textContent = datasetAfterAnonymizationArray[fileCurrentIndex][dicomTag];
+		dicomTagValuesTable.rows[i].cells[2].textContent = datasetBeforeAnonymizationArray[fileIndexCurrent][dicomTag];
+		dicomTagValuesTable.rows[i].cells[3].textContent = datasetAfterAnonymizationArray[fileIndexCurrent][dicomTag];
 	}
 }
 
@@ -119,7 +119,7 @@ loadFilesInputFile.onchange = function() {
 		return;
 	}
 	filesNum = files.length;
-	fileCurrentIndexInputRange.max = filesNum - 1;
+	fileIndexCurrentInputRange.max = filesNum - 1;
 	for (let i = 0; i < filesNum; i++) {
 		const reader = new FileReader();
 		reader.onload = function() {
@@ -132,7 +132,7 @@ loadFilesInputFile.onchange = function() {
 			// dicomDictArray[i].dict['0018A001'].Value[0]['00081010'].Value = [''] // Only for review.
 			datasetAfterAnonymizationArray[i] = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomDictArray[i].dict);
 			if (i === files.length - 1) {
-				fileCurrentIndexInputRange.oninput();
+				fileIndexCurrentInputRange.oninput();
 				showEmptyOriginalTagsInputCheckbox.onclick();
 				disableUI(false);
 			}
@@ -171,7 +171,7 @@ showEmptyOriginalTagsInputCheckbox.onclick = function() {
 		styleDisplayNew = 'none';
 	}
 	for (const [i, dicomTag] of dicomTagArray.entries()) {
-		if (datasetBeforeAnonymizationArray[fileCurrentIndex][dicomTag] === undefined & (i !== 0)) {
+		if (datasetBeforeAnonymizationArray[fileIndexCurrent][dicomTag] === undefined & (i !== 0)) {
 			dicomTagValuesTable.rows[i].style.display = styleDisplayNew;
 		} else {
 			dicomTagValuesTable.rows[i].style.display = 'block';
