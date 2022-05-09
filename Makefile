@@ -7,7 +7,7 @@ artifactsdir=artifacts
 test: package-lock.json
 	node test.js
 
-package-lock.json:
+package-lock.json: package.json
 	npm install
 
 clean:
