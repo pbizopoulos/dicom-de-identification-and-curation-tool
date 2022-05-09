@@ -1,14 +1,25 @@
 .POSIX:
 
+.PHONY: all clean
+
 artifactsdir=artifacts
+codefile=test.js
 
-.PHONY: test clean
+all: $(codefile) .gitignore package-lock.json
+	mkdir -p $(artifactsdir)
+	node $(codefile)
 
-test: package-lock.json
-	node test.js
+clean:
+	rm -rf $(artifactsdir) node_modules/ package-lock.json
 
 package-lock.json: package.json
 	npm install
 
-clean:
-	rm -rf $(artifactsdir) node_modules/ package-lock.json
+package.json:
+	printf '{}\n' > package.json
+
+$(codefile):
+	printf '\n' > $(codefile)
+
+.gitignore:
+	printf '$(artifactsdir)/\nnode_modules/\npackage-lock.json\n' > .gitignore
