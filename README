@@ -1,10 +1,13 @@
 DICOM De-Identification tool web application:
+- Private-oriented (data do not leave the device)
+- No installation needed (only a modern browser is needed)
 - https://pbizopoulos.github.io/dicom-de-identification-web-application
 
-A web-based client-side DICOM de-identification tool.
-It has the following advantages:
-- Privacy (data do not leave the device)
-- No installation needed (only a modern browser is needed)
+End-user instructions:
+1) Visit https://pbizopoulos.github.io/dicom-de-identification-web-application .
+2) Load your data.
+3) De-identify.
+4) Save de-identified data.
 
 Requirements:
 - POSIX-oriented operating system https://en.wikipedia.org/wiki/POSIX#POSIX-oriented_operating_systems

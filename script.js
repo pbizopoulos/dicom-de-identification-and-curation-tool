@@ -164,15 +164,9 @@ saveDeidentifiedFilesButton.onclick = function() {
 }
 
 showEmptyOriginalTagsInputCheckbox.onclick = function() {
-	let styleDisplayNew;
-	if (this.checked) {
-		styleDisplayNew = 'block';
-	} else {
-		styleDisplayNew = 'none';
-	}
 	for (const [i, dicomTag] of dicomTagArray.entries()) {
-		if (datasetBeforeAnonymizationArray[fileIndexCurrent][dicomTag] === undefined & (i !== 0)) {
-			dicomTagValuesTable.rows[i].style.display = styleDisplayNew;
+		if (datasetBeforeAnonymizationArray[fileIndexCurrent][dicomTag] === undefined & (i !== 0) & (!this.checked)) {
+			dicomTagValuesTable.rows[i].style.display = 'none';
 		} else {
 			dicomTagValuesTable.rows[i].style.display = 'block';
 		}
