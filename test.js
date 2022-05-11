@@ -9,7 +9,7 @@ const puppeteer = require('puppeteer');
 async function waitFile(filename) {
 	return new Promise(async (resolve, reject) => {
 		if (!fs.existsSync(filename)) {
-			await delay(3000);
+			await delay(1000);
 			await waitFile(filename);
 		}
 		resolve();
