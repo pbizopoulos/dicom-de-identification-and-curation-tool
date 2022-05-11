@@ -7,7 +7,7 @@ codefile=test.js
 
 all: $(codefile) .gitignore package-lock.json ##	Generate artifacts.
 	mkdir -p $(artifactsdir)
-	node $(codefile)
+	ARTIFACTS_DIR=$(artifactsdir) node $(codefile)
 
 clean: ## Remove dependent directories.
 	rm -rf $(artifactsdir) node_modules/ package-lock.json

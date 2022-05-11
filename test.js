@@ -6,17 +6,13 @@ const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
 
-async function waitFile (filename) {
-
+async function waitFile(filename) {
 	return new Promise(async (resolve, reject) => {
 		if (!fs.existsSync(filename)) {
 			await delay(3000);
 			await waitFile(filename);
-			resolve();
-		} else {
-			resolve();
 		}
-
+		resolve();
 	})
 }
 
@@ -29,7 +25,7 @@ function delay(time) {
 (async () => {
 	const browser = await puppeteer.launch({ headless: true });
 	const page = await browser.newPage();
-	const artifactsDir = 'artifacts';
+	const artifactsDir = process.env.ARTIFACTS_DIR;
 	await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.resolve(artifactsDir)});
 	for (let i = 1; i < 10; i++) {
 		const inputDicomFileName = `N2D_000${i}.dcm`;
