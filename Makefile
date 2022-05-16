@@ -13,7 +13,7 @@ clean: ## Remove dependent directories.
 	rm -rf $(artifactsdir) node_modules/ package-lock.json
 
 help: ## 	Show all commands.
-	@grep '##' $(MAKEFILE_LIST) | sed 's/\(\:.*\#\#\)/\:\ /' | sed 's/\$$(artifactsdir)/$(artifactsdir)/' | sed 's/\$$(codefile)/$(codefile)/' | sed 's/\$$(texfile)/$(texfile)/' | grep -v grep
+	@grep '##' $(MAKEFILE_LIST) | sed 's/\(\:.*\#\#\)/\:\ /' | sed 's/\$$(artifactsdir)/$(artifactsdir)/' | sed 's/\$$(codefile)/$(codefile)/' | grep -v grep
 
 package-lock.json: package.json
 	npm install
