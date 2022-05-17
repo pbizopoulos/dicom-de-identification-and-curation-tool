@@ -26,14 +26,11 @@ function resetTable() {
 	}
 	for (const [i, dicomTag] of dicomTagArray.entries()) {
 		let row = dicomTagValuesTable.insertRow(i);
-		let dicomTagNameCell = row.insertCell(0);
-		let dicomTagCell = row.insertCell(1);
-		let dicomTagCellValueOriginal = row.insertCell(2);
-		let dicomTagCellValueDeidentified = row.insertCell(3);
-		let applyGlobalValueDeidentifiedCell = row.insertCell(4);
+		let dicomTagCell = row.insertCell(0);
+		let dicomTagCellValueOriginal = row.insertCell(1);
+		let dicomTagCellValueDeidentified = row.insertCell(2);
+		let applyGlobalValueDeidentifiedCell = row.insertCell(3);
 		if (i === 0) {
-			dicomTagNameCell.textContent = 'DICOM tag name';
-			dicomTagNameCell.style.fontWeight = 'bold';
 			dicomTagCell.textContent = 'DICOM tag';
 			dicomTagCell.style.fontWeight = 'bold';
 			dicomTagCellValueOriginal.textContent = 'Original value';
@@ -43,11 +40,9 @@ function resetTable() {
 			applyGlobalValueDeidentifiedCell.textContent = 'Global button';
 			applyGlobalValueDeidentifiedCell.style.fontWeight = 'bold';
 		} else {
-			dicomTagNameCell.textContent = dicomTag;
-			dicomTagNameCell.style.borderStyle = 'groove';
 			const dicomTagCurrent = dcmjs.data.DicomMetaDictionary.nameMap[dicomTag];
 			if (dicomTagCurrent) {
-				dicomTagCell.textContent = dicomTagCurrent.tag;
+				dicomTagCell.textContent = `${dicomTagCurrent.tag} ${dicomTag}`;
 			}
 			dicomTagCell.style.borderStyle = 'groove';
 			dicomTagCellValueOriginal.style.borderStyle = 'groove';
@@ -96,7 +91,7 @@ function saveData(blob, filename) {
 
 function saveValuesFromRowToVariables(rowIndex) {
 	if (!(Array.isArray(datasetBeforeAnonymizationArray[fileIndexCurrent][dicomTagArray[rowIndex]]))) {
-		datasetAfterAnonymizationArray[fileIndexCurrent][dicomTagArray[rowIndex]] = dicomTagValuesTable.rows[rowIndex].cells[3].textContent;
+		datasetAfterAnonymizationArray[fileIndexCurrent][dicomTagArray[rowIndex]] = dicomTagValuesTable.rows[rowIndex].cells[2].textContent;
 		dicomDictArray[fileIndexCurrent].dict = dcmjs.data.DicomMetaDictionary.denaturalizeDataset(datasetAfterAnonymizationArray[fileIndexCurrent]);
 	}
 }
@@ -108,8 +103,8 @@ fileIndexCurrentInputRange.oninput = function() {
 		if (i === 0) {
 			continue;
 		}
-		dicomTagValuesTable.rows[i].cells[2].textContent = datasetBeforeAnonymizationArray[fileIndexCurrent][dicomTag];
-		dicomTagValuesTable.rows[i].cells[3].textContent = datasetAfterAnonymizationArray[fileIndexCurrent][dicomTag];
+		dicomTagValuesTable.rows[i].cells[1].textContent = datasetBeforeAnonymizationArray[fileIndexCurrent][dicomTag];
+		dicomTagValuesTable.rows[i].cells[2].textContent = datasetAfterAnonymizationArray[fileIndexCurrent][dicomTag];
 	}
 }
 

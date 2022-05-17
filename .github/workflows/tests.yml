@@ -1,20 +1,4 @@
-on:
-  push:
-    paths:
-      - '.github/workflows/tests.yml'
-      - 'Makefile'
-      - 'index.html'
-      - 'package.json'
-      - 'script.js'
-      - 'test.js'
-  pull_request:
-    paths:
-      - '.github/workflows/tests.yml'
-      - 'Makefile'
-      - 'index.html'
-      - 'package.json'
-      - 'script.js'
-      - 'test.js'
+on: [push, pull_request]
 
 jobs:
   make:

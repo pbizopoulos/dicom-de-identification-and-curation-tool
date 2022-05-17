@@ -35,7 +35,7 @@ function delay(time) {
 			await waitFile(`${artifactsDir}/${inputDicomFileName}`);
 		}
 	}
-	await page.goto(`file:${path.join(__dirname, 'index.html')}`);
+	await page.goto(`file:${path.join(__dirname, 'docs/index.html')}`);
 	await page.waitForSelector('#loadFilesInputFile:not([disabled])');
 	const inputUploadHandle = await page.$('#loadFilesInputFile');
 	const dicomFileNameArray = fs.readdirSync(artifactsDir).filter(fn => fn.endsWith('.dcm')).filter(fn => fn.startsWith('N2D_'));
@@ -48,9 +48,9 @@ function delay(time) {
 	});
 	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
 	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
-	await page.waitForXPath('/html/body/table/tbody/tr[65]/td[4]').then(selector => selector.click());
+	await page.waitForXPath('/html/body/table/tbody/tr[65]/td[3]').then(selector => selector.click());
 	await page.keyboard.type('20220101');
-	await page.waitForXPath('/html/body/table/tbody/tr[65]/td[5]').then(selector => selector.click());
+	await page.waitForXPath('/html/body/table/tbody/tr[65]/td[4]').then(selector => selector.click());
 	await page.evaluate(() => {
 		document.querySelector('#fileIndexCurrentInputRange').value = 0;
 		document.querySelector('#fileIndexCurrentInputRange').oninput();
@@ -65,8 +65,8 @@ function delay(time) {
 	});
 	const screenshotBuffer = new fs.readFileSync(`${artifactsDir}/puppeteer-screenshot.png`);
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
-	if (process.env.GITHUB_ACTIONS == false) {
-		assert(screenshotHash === '75226f739b75d2633c9bc29ee2e0c5a221d08d92df1ee8fe75acae84079f8c30');
+	if (process.env.GITHUB_ACTIONS === undefined) {
+		assert(screenshotHash === '4b48ef951fb0e9adea3e5178d8b3a1bc6e17c2e8784be4b7905a4c1805553549');
 	}
 	await page.close();
 	await browser.close();
