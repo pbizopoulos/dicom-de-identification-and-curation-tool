@@ -10,10 +10,10 @@ End-user instructions:
 4) Save de-identified data.
 
 Requirements:
-- POSIX-oriented operating system https://en.wikipedia.org/wiki/POSIX#POSIX-oriented_operating_systems
-- Git (Any version) https://git-scm.com/downloads
-- GNU Make (>= 3.79) https://www.gnu.org/software/make/
-- npm https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+- POSIX-oriented operating system
+- Git (Any version)
+- GNU Make (>= 3.79)
+- npm
 
 Preparation:
 git clone https://github.com/pbizopoulos/dicom-de-identification-web-application
