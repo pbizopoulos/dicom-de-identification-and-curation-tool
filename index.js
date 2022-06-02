@@ -66,7 +66,7 @@ function delay(time) {
 	const screenshotBuffer = new fs.readFileSync(`${artifactsDir}/puppeteer-screenshot.png`);
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
 	if (process.env.GITHUB_ACTIONS === undefined) {
-		assert(screenshotHash === '4b48ef951fb0e9adea3e5178d8b3a1bc6e17c2e8784be4b7905a4c1805553549');
+		assert(screenshotHash === '15ef2dbaf397bd850f005c05a16ccc82d552f91b642f449dd9b865a9ea7040c9');
 	}
 	await page.close();
 	await browser.close();

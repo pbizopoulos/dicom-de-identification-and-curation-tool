@@ -10,7 +10,7 @@ End-user instructions:
 4) Save de-identified data.
 
 Requirements:
-- POSIX compliant shell (ash, bash, dash, ksh, posh, yash or zsh)
+- POSIX compliant shell (any of Bash, Dash, KornShell, Yash, Zsh)
 - Git (Any version)
 - Make (bmake or GNU Make)
 - npm
