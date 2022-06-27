@@ -1,0 +1,12 @@
+input:invalid {
+	border: red solid 3px;
+}
+
+table {
+	width:100%;
+}
+
+td {
+	width: 300px;
+	word-break: break-all;
+}
