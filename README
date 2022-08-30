@@ -1,0 +1,26 @@
+DICOM De-Identification:
+- Private-oriented (data do not leave the device)
+- No installation needed (only a modern browser is needed)
+- https://pbizopoulos.github.io/dicom-de-identification
+
+End-user instructions:
+1) Visit https://pbizopoulos.github.io/dicom-de-identification .
+2) Load your DICOM files or a folder that contains DICOM files.
+3) De-identify.
+4) Save de-identified data.
+
+Requirements:
+- POSIX compliant shell (any of Bash, Dash, KornShell, Yash, Zsh)
+- Git (Any version)
+- Make (bmake or GNU Make)
+- npm
+
+Preparation:
+git clone https://github.com/pbizopoulos/dicom-de-identification
+cd dicom-de-identification/
+
+Basic commands:
+make		# Generate artifacts.
+make clean 	# Remove dependent directories.
+make help	# Show all commands.
+make -C node	# Get latest NEMA table E.1-1.

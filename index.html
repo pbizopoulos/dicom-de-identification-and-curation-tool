@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="width=device-width, initial-scale=1" name="viewport">
+		<title>DICOM De-identification web application</title>
+		<link href="data:," rel="icon">
+		<link href="https://pbizopoulos.github.io/style.css" rel="stylesheet">
+		<link href="style.css" rel="stylesheet">
+		<script defer src="https://cdn.jsdelivr.net/npm/dcmjs@latest/build/dcmjs.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/jszip@latest/dist/jszip.min.js"></script>
+		<script defer src="node/release/nema-table.js"></script>
+		<script defer src="script.js"></script>
+	</head>
+	<body>
+		<div class="div-header">
+			<nav>
+				<a href="https://pbizopoulos.github.io">Home page</a> / <b>DICOM De-identification</b>
+			</nav>
+			<div class="div-source-code-link">
+				<a href="https://github.com/pbizopoulos/pbizopoulos.github.io">Source code</a>
+			</div>
+		</div>
+		<div>
+			<div>
+				NOT FOR MEDICAL USE
+			</div>
+			<div>
+				<label for="loadFilesInputFile">Load files:</label>
+				<input id="loadFilesInputFile" name="loadFilesInputFile" onchange="onloadFilesOrDirectories();" type="file" multiple>
+			</div>
+			<div>
+				<label for="loadDirectoriesInputFile">Load directories:</label>
+				<input id="loadDirectoriesInputFile" name="loadDirectoriesInputFile" onchange="onloadFilesOrDirectories();" type="file" webkitdirectory directory multiple>
+			</div>
+			<div>
+				<label for="fileIndexCurrentInputRange">File index: <span id="fileIndexCurrentSpan"></span></label>
+				<input id="fileIndexCurrentInputRange" max="0" min="0" name="fileIndexCurrentInputRange" step="1" type="range">
+			</div>
+			<div>
+				<label for="applyDeidentificationProfileInputCheckbox">Apply de-identification profile:</label>
+				<input name="applyDeidentificationProfileInputCheckbox" id="applyDeidentificationProfileInputCheckbox" type="checkbox"></input>
+			</div>
+			<div>
+				<label for="keepPrivateAttributesInputCheckbox">Keep private attributes:</label>
+				<input name="keepPrivateAttributesInputCheckbox" id="keepPrivateAttributesInputCheckbox" type="checkbox" checked></input>
+			</div>
+			<div>
+				<label for="keepUIDsInputCheckbox">Keep UIDs:</label>
+				<input name="keepUIDsInputCheckbox" id="keepUIDsInputCheckbox" type="checkbox" checked></input>
+			</div>
+			<div>
+				<label for="replacePatientNameWithFileIndexInputCheckbox">Replace patient name with file index:</label>
+				<input name="replacePatientNameWithFileIndexInputCheckbox" id="replacePatientNameWithFileIndexInputCheckbox" type="checkbox"></input>
+			</div>
+			<div>
+				<label for="dateProcessingSelect">Choose date processing:</label>
+				<select name="dateProcessingSelect" id="dateProcessingSelect">
+					<option value="dateProcessingKeepOption">keep</option>
+					<option value="dateProcessingEmptyOption">empty</option>
+					<option value="dateProcessingRandomShiftOption">random shift</option>
+				</select>
+			</div>
+			<div>
+				<label for="showEmptyOriginalTagsInputCheckbox">Show empty original tags:</label>
+				<input id="showEmptyOriginalTagsInputCheckbox" name="showEmptyOriginalTagsInputCheckbox" type="checkbox">
+			</div>
+			<div>
+				<label for="dicomTagExportPathInputText">Export path:</label>
+				<input id="dicomTagExportPathInputText" name="dicomTagExportPathInputText" pattern="([0-9A-E]{8}/)*" type="text" placeholder="8 digit or capital letter groups separated with forward slash" size="32">
+			</div>
+			<div>
+				<label for="replaceFileNameWithRandomInputCheckbox">Replace file name with random:</label>
+				<input id="replaceFileNameWithRandomInputCheckbox" name="replaceFileNameWithRandomInputCheckbox" type="checkbox">
+			</div>
+			<div>
+				<button id="exportDeidentifiedFilesButton">Export de-identified files</button>
+			</div>
+			<div>
+				<button id="exportDeidentifiedPatientNamesButton">Export de-identified patient names</button>
+			</div>
+		</div>
+		<div>
+			<table id="dicomTagValuesTable"></table>
+		</div>
+	</body>
+</html>
