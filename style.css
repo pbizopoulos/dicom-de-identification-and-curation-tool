@@ -1,12 +1,23 @@
+input {
+	display: table-cell;
+}
+
 input:invalid {
 	border: red solid 3px;
 }
 
-table {
-	width:100%;
+label {
+	display: table-cell;
+	text-align: right;
 }
 
-td {
-	width: 300px;
-	word-break: break-all;
+li {
+	display: table-row;
+}
+
+ul {
+	border: solid;
+	display: table;
+	padding-inline-start: 0px;
+	width: 50%;
 }

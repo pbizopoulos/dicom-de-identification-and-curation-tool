@@ -31,43 +31,26 @@ function waitFile(fileName) {
 	let dicomFileNameArray = fs.readdirSync(artifactsDir).filter(fn => fn.endsWith('.dcm')).filter(fn => fn.startsWith('N2D_'));
 	let dicomFilePathArray = dicomFileNameArray.map(file => `${artifactsDir}/${file}`);
 	inputUploadHandle.uploadFile(...dicomFilePathArray);
-	await page.waitForSelector('#fileIndexCurrentInputRange:not([disabled])');
-	await page.evaluate(() => {
-		document.querySelector('#fileIndexCurrentInputRange').value = 3;
-		document.querySelector('#fileIndexCurrentInputRange').oninput();
-	});
-	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
-	await page.waitForSelector('#showEmptyOriginalTagsInputCheckbox').then(selector => selector.click());
-	await page.waitForXPath('/html/body/div[3]/table/tbody/tr[65]/td[3]').then(selector => selector.click());
-	await page.keyboard.type('20220101');
-	await page.waitForXPath('/html/body/div[3]/table/tbody/tr[65]/td[4]').then(selector => selector.click());
-	await page.evaluate(() => {
-		document.querySelector('#fileIndexCurrentInputRange').value = 0;
-		document.querySelector('#fileIndexCurrentInputRange').oninput();
-	});
-	await page.waitForXPath('/html/body/div[3]/table/tbody/tr[65]/td[3]').then(selector => selector.click());
-	await page.keyboard.press('Backspace');
-	await page.keyboard.type('2');
-	if (fs.existsSync(`${artifactsDir}/files.zip`)) {
-		await fs.unlinkSync(`${artifactsDir}/files.zip`);
+	if (fs.existsSync(`${artifactsDir}/de-identified-files.zip`)) {
+		await fs.unlinkSync(`${artifactsDir}/de-identified-files.zip`);
 	}
-	await page.waitForSelector('#exportDeidentifiedFilesButton').then(selector => selector.click());
-	waitFile(`${artifactsDir}/files.zip`);
-	const zipFileBuffer = new fs.readFileSync(`${artifactsDir}/files.zip`);
+	await page.waitForSelector('#saveDeidentifiedFilesAsZipButton').then(selector => selector.click());
+	waitFile(`${artifactsDir}/de-identified-files.zip`);
+	const zipFileBuffer = new fs.readFileSync(`${artifactsDir}/de-identified-files.zip`);
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
-	assert.strictEqual(zipFileHash, '535d6fc7ceb0f764a1c76fcaf920f043448656aa47f175121c75710d90bbb6cb');
-	await page.waitForSelector('#exportDeidentifiedPatientNamesButton').then(selector => selector.click());
+	assert.strictEqual(zipFileHash, 'a5ceb7b4ecb02f435fee19086ddc3ca1a184ebf9696fe7aae234375a15625d3c');
+	await page.waitForSelector('#saveDeidentifiedPatientNamesButton').then(selector => selector.click());
 	waitFile(`${artifactsDir}/de-identified-patient-names.csv`);
 	const deIdentifiedPatientNamesBuffer = new fs.readFileSync(`${artifactsDir}/de-identified-patient-names.csv`);
 	const deIdentifiedPatientNamesHash = crypto.createHash('sha256').update(deIdentifiedPatientNamesBuffer).digest('hex');
-	assert.strictEqual(deIdentifiedPatientNamesHash, '7b7d181d2d194a9ab66d3c2f5642ea0cb60e44e7b71b4941da0b537d698c9c53');
+	assert.strictEqual(deIdentifiedPatientNamesHash, '26c93101ae6f2ab670a97f1408b10933bb3e5867a9186d712dc8910271e85ac9');
 	await page.screenshot({
 		path: `${artifactsDir}/puppeteer-screenshot.png`
 	});
 	const screenshotBuffer = new fs.readFileSync(`${artifactsDir}/puppeteer-screenshot.png`);
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
 	if (process.env.GITHUB_ACTIONS === undefined) {
-		assert.strictEqual(screenshotHash, '1b736ee5ec99da808e07f55a083de0cee641b54426ee6cf906c974628ff6de77');
+		assert.strictEqual(screenshotHash, '675619f23182e41fa450aee75375e124766c273a77d4ee34577e111b438cc470');
 	}
 	await page.close();
 	await browser.close();

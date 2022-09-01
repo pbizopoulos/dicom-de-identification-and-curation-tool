@@ -18,70 +18,56 @@
 				<a href="https://pbizopoulos.github.io">Home page</a> / <b>DICOM De-identification</b>
 			</nav>
 			<div class="div-source-code-link">
-				<a href="https://github.com/pbizopoulos/pbizopoulos.github.io">Source code</a>
+				<a href="https://github.com/pbizopoulos/dicom-de-identification">Source code</a>
 			</div>
 		</div>
 		<div>
-			<div>
-				NOT FOR MEDICAL USE
-			</div>
-			<div>
+			NOT FOR MEDICAL USE
+		</div>
+		<ul>
+			<label>
+				<b>Input</b>
+			</label>
+			<li>
 				<label for="loadFilesInputFile">Load files:</label>
-				<input id="loadFilesInputFile" name="loadFilesInputFile" onchange="onloadFilesOrDirectories();" type="file" multiple>
-			</div>
-			<div>
-				<label for="loadDirectoriesInputFile">Load directories:</label>
-				<input id="loadDirectoriesInputFile" name="loadDirectoriesInputFile" onchange="onloadFilesOrDirectories();" type="file" webkitdirectory directory multiple>
-			</div>
-			<div>
-				<label for="fileIndexCurrentInputRange">File index: <span id="fileIndexCurrentSpan"></span></label>
-				<input id="fileIndexCurrentInputRange" max="0" min="0" name="fileIndexCurrentInputRange" step="1" type="range">
-			</div>
-			<div>
-				<label for="applyDeidentificationProfileInputCheckbox">Apply de-identification profile:</label>
-				<input name="applyDeidentificationProfileInputCheckbox" id="applyDeidentificationProfileInputCheckbox" type="checkbox"></input>
-			</div>
-			<div>
-				<label for="keepPrivateAttributesInputCheckbox">Keep private attributes:</label>
-				<input name="keepPrivateAttributesInputCheckbox" id="keepPrivateAttributesInputCheckbox" type="checkbox" checked></input>
-			</div>
-			<div>
-				<label for="keepUIDsInputCheckbox">Keep UIDs:</label>
-				<input name="keepUIDsInputCheckbox" id="keepUIDsInputCheckbox" type="checkbox" checked></input>
-			</div>
-			<div>
-				<label for="replacePatientNameWithFileIndexInputCheckbox">Replace patient name with file index:</label>
-				<input name="replacePatientNameWithFileIndexInputCheckbox" id="replacePatientNameWithFileIndexInputCheckbox" type="checkbox"></input>
-			</div>
-			<div>
+				<input id="loadFilesInputFile" name="loadFilesInputFile" onchange="onloadFilesOrDirectory();" type="file" multiple>
+			</li>
+			<li>
+				<label for="loadDirectoryInputFile">Load directory:</label>
+				<input id="loadDirectoryInputFile" name="loadDirectoryInputFile" onchange="onloadFilesOrDirectory();" type="file" webkitdirectory directory multiple>
+			</li>
+		</ul>
+		<ul>
+			<label>
+				<b>De-identification options</b>
+			</label>
+			<li>
+				<label for="retainUidsInputCheckbox">Retain UIDs:</label>
+				<input id="retainUidsInputCheckbox" name="retainUidsInputCheckbox" type="checkbox" checked></input>
+			</li>
+			<li>
 				<label for="dateProcessingSelect">Choose date processing:</label>
 				<select name="dateProcessingSelect" id="dateProcessingSelect">
 					<option value="dateProcessingKeepOption">keep</option>
 					<option value="dateProcessingEmptyOption">empty</option>
 					<option value="dateProcessingRandomShiftOption">random shift</option>
 				</select>
-			</div>
-			<div>
-				<label for="showEmptyOriginalTagsInputCheckbox">Show empty original tags:</label>
-				<input id="showEmptyOriginalTagsInputCheckbox" name="showEmptyOriginalTagsInputCheckbox" type="checkbox">
-			</div>
-			<div>
-				<label for="dicomTagExportPathInputText">Export path:</label>
-				<input id="dicomTagExportPathInputText" name="dicomTagExportPathInputText" pattern="([0-9A-E]{8}/)*" type="text" placeholder="8 digit or capital letter groups separated with forward slash" size="32">
-			</div>
-			<div>
-				<label for="replaceFileNameWithRandomInputCheckbox">Replace file name with random:</label>
-				<input id="replaceFileNameWithRandomInputCheckbox" name="replaceFileNameWithRandomInputCheckbox" type="checkbox">
-			</div>
-			<div>
-				<button id="exportDeidentifiedFilesButton">Export de-identified files</button>
-			</div>
-			<div>
-				<button id="exportDeidentifiedPatientNamesButton">Export de-identified patient names</button>
-			</div>
-		</div>
-		<div>
-			<table id="dicomTagValuesTable"></table>
-		</div>
+			</li>
+		</ul>
+		<ul>
+			<label>
+				<b>Output</b>
+			</label>
+			<li>
+				<label for="dicomTagSavePathInputText">Save path:</label>
+				<input id="dicomTagSavePathInputText" name="dicomTagSavePathInputText" pattern="([0-9A-E]{8}/)*" type="text" placeholder="8 digit or capital letter groups separated with forward slash" value="00100010/00080060/00200011/">
+			</li>
+			<li>
+				<button id="saveDeidentifiedFilesAsZipButton">Save de-identified files as zip</button>
+			</li>
+			<li>
+				<button id="saveDeidentifiedPatientNamesButton">Save de-identified patient names</button>
+			</li>
+		</ul>
 	</body>
 </html>

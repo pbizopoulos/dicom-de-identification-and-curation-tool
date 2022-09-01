@@ -5,7 +5,7 @@
 artifacts_dir=artifacts
 code_file_name=index.js
 
-$(artifacts_dir)/code-run: $(code_file_name) .gitignore index.html package-lock.json script.js ## Generate artifacts.
+$(artifacts_dir)/code-run: $(code_file_name) .gitignore index.html package-lock.json script.js style.css ## Generate artifacts.
 	mkdir -p $(artifacts_dir)
 	ARTIFACTS_DIR=$(artifacts_dir) node $(code_file_name)
 	touch $(artifacts_dir)/code-run
