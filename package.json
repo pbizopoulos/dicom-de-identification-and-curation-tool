@@ -1,6 +1,6 @@
 {
 	"dependencies": {
 		"dcmjs": "0.24.9",
-		"puppeteer": "15.5.0"
+		"puppeteer": "17.0.0"
 	}
 }
