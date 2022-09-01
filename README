@@ -1,13 +1,13 @@
-DICOM De-Identification:
+DICOM De-Identification and Curation:
 - Private-oriented (data do not leave the device)
 - No installation needed (only a modern browser is needed)
-- https://pbizopoulos.github.io/dicom-de-identification
+- https://pbizopoulos.github.io/dicom-de-identification-and-curation
 
 End-user instructions:
-1) Visit https://pbizopoulos.github.io/dicom-de-identification .
+1) Visit https://pbizopoulos.github.io/dicom-de-identification-and-curation .
 2) Load your DICOM files or a folder that contains DICOM files.
-3) De-identify.
-4) Save de-identified data.
+3) Choose options to de-identify and curate.
+4) Save de-identified and curated data.
 
 Requirements:
 - POSIX compliant shell (any of Bash, Dash, KornShell, Yash, Zsh)
@@ -16,8 +16,8 @@ Requirements:
 - npm
 
 Preparation:
-git clone https://github.com/pbizopoulos/dicom-de-identification
-cd dicom-de-identification/
+git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation
+cd dicom-de-identification-and-curation/
 
 Basic commands:
 make		# Generate artifacts.
