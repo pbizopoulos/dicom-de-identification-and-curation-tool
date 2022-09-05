@@ -3,8 +3,9 @@
 const dateProcessingSelect = document.getElementById('dateProcessingSelect');
 const dicomTagArray = Object.keys(dcmjs.data.DicomMetaDictionary.nameMap);
 const dicomTagSavePathInputText = document.getElementById('dicomTagSavePathInputText');
-const filesProcessedSpan = document.getElementById('filesProcessedSpan');
-const nemaTable = JSON.parse(nemaTableString);
+const numberOfFilesProcessedSpan = document.getElementById('numberOfFilesProcessedSpan');
+const nemaTable = JSON.parse(nemaModifiedTableString);
+const retainDescriptionsInputCheckbox = document.getElementById('retainDescriptionsInputCheckbox');
 const retainUidsInputCheckbox = document.getElementById('retainUidsInputCheckbox');
 const saveProcessedFilesAsZipButton = document.getElementById('saveProcessedFilesAsZipButton');
 let dicomDictArray = [];
@@ -14,6 +15,7 @@ let patientNameObject = {};
 
 function disableUI(argument) {
 	dateProcessingSelect.disabled = argument;
+	retainDescriptionsInputCheckbox.disabled = argument;
 	retainUidsInputCheckbox.disabled = argument;
 	saveProcessedFilesAsZipButton.disabled = argument;
 }
@@ -39,7 +41,8 @@ function onloadDeidentiedPatientNamesInputFile() {
 		const text = e.target.result;
 		const rowArray = text.split('\n');
 		for (let i = 0; i < rowArray.length; i++) {
-			patientNameObject[rowArray[i][0]] = rowArray[i][1];
+			const rowElementArray = rowArray[i].split(',');
+			patientNameObject[rowElementArray[0]] = rowElementArray[1];
 		}
 	};
 	reader.readAsText(file);
@@ -68,7 +71,7 @@ function saveData(blob, fileName) {
 
 saveProcessedFilesAsZipButton.onclick = function() {
 	disableUI(true);
-	const numberOfDaysToAdd = Math.floor((Math.random() - 0.5) * 200);
+	const daysShiftNum = Math.floor((Math.random() - 0.5) * 200);
 	const regexpDate = /(\d{4})(\d{2})(\d{2})/;
 	const zip = new JSZip();
 	for (let i = 0; i < filesNum; i++) {
@@ -78,40 +81,34 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			for (const property in nemaTable) {
 				if (dicomDictArray[i].dict[property]) {
 					if (nemaTable[property][3] === 'C') {
-						let originalDate = dicomDictArray[i].dict[property].Value[0];
-						if (originalDate !== '') {
-							if (dateProcessingSelect.value === 'dateProcessingRandomShiftOption') {
-								const validDate = regexpDate.test(originalDate);
-								if (validDate) {
-									originalDate = originalDate.replace(regexpDate, "$1-$2-$3");
-									originalDate = new Date(originalDate);
-									let unixDate = originalDate.setDate(originalDate.getDate() + numberOfDaysToAdd);
-									let alteredDate = new Date(unixDate);
-									let formattedDate = alteredDate.getUTCFullYear().toString() + (alteredDate.getMonth() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2}) + (alteredDate.getDay() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2});
-									dicomDictArray[i].dict[property].Value = [formattedDate];
-								}
-								continue;
+						let dateOriginal = dicomDictArray[i].dict[property].Value[0];
+						if (dateProcessingSelect.value === 'dateProcessingRandomShiftOption') {
+							if (regexpDate.test(dateOriginal)) {
+								dateOriginal = dateOriginal.replace(regexpDate, "$1-$2-$3");
+								dateOriginal = new Date(dateOriginal);
+								const dateUnix = dateOriginal.setDate(dateOriginal.getDate() + daysShiftNum);
+								const dateAltered = new Date(dateUnix);
+								const dateFormatted = dateAltered.getUTCFullYear().toString() + (dateAltered.getMonth() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2}) + (dateAltered.getDay() + 1).toLocaleString('en-US', {minimumIntegerDigits: 2});
+								dicomDictArray[i].dict[property].Value = [dateFormatted];
 							}
-							if (dateProcessingSelect.value === 'dateProcessingEmptyOption') {
-								dicomDictArray[i].dict[property].Value = [];
-							}
+						} else if (dateProcessingSelect.value === 'dateProcessingEmptyOption') {
+							dicomDictArray[i].dict[property].Value = [];
 						}
+					} else if (nemaTable[property][4] === 'X' && retainDescriptionsInputCheckbox.checked) {
 						continue;
-					}
-					if (nemaTable[property][1] === 'K' && retainUidsInputCheckbox.checked) {
+					} else if (nemaTable[property][1] === 'K' && retainUidsInputCheckbox.checked) {
 						continue;
-					}
-					if (property === '00100010') {
-						const patientName = dicomDictArray[i].dict['00100010'].Value[0];
+					} else if (property === '00100010') {
+						const patientName = dicomDictArray[i].dict[property].Value[0];
 						if (!(patientName in patientNameObject)) {
 							patientNameObject[patientName] = `Patient-${Object.keys(patientNameObject).length}`;
 						}
-						dicomDictArray[i].dict['00100010'].Value[0] = patientNameObject[patientName];
+						dicomDictArray[i].dict[property].Value[0] = patientNameObject[patientName];
 					} else {
 						dicomDictArray[i].dict[property].Value = [];
 					}
 				}
-				filesProcessedSpan.textContent = `${i+1}/${filesNum}`;
+				numberOfFilesProcessedSpan.textContent = `${i+1}/${filesNum}`;
 			}
 			hashCode(JSON.stringify(dicomDictArray[i])).then((hex) => {
 				const dicomTagSavePathArray = dicomTagSavePathInputText.value.slice(0, -1).split('/');

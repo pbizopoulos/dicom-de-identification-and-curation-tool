@@ -5,7 +5,7 @@
 artifacts_dir=artifacts
 code_file_name=index.js
 
-$(artifacts_dir)/code-run: $(code_file_name) .gitignore package-lock.json ## Run test.
+$(artifacts_dir)/code-run: $(code_file_name) .gitignore index.js package-lock.json ## Run test.
 	mkdir -p $(artifacts_dir)
 	ARTIFACTS_DIR=$(artifacts_dir) node $(code_file_name)
 	touch $(artifacts_dir)/code-run

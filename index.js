@@ -145,7 +145,7 @@ function waitFile(fileName) {
 	const page = await browser.newPage();
 	const artifactsDir = process.env.ARTIFACTS_DIR;
 	await page._client().send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.resolve(artifactsDir)});
-	for (let i = 0; i < 10000; i++) {
+	for (let i = 0; i < 100; i++) {
 		let inputDicomFileName = `file-name-${i}.dcm`;
 		if (i % 7 != 0) {
 			const newPath = `file-path-${i % 7}`;
@@ -154,7 +154,6 @@ function waitFile(fileName) {
 				fs.mkdirSync(`${artifactsDir}/${newPath}`);
 			}
 		}
-
 		if (!(fs.existsSync(`${artifactsDir}/${inputDicomFileName}`))) {
 			let dataset = JSON.parse(jsonDataset);
 			dataset.PatientName = `John Doe ${i % 100}`;
@@ -177,7 +176,7 @@ function waitFile(fileName) {
 	await page.goto(`file:${path.join(__dirname, 'index.html')}`);
 	await page.waitForSelector('#loadFilesInputFile:not([disabled])');
 	const inputUploadHandle = await page.$('#loadFilesInputFile');
-	let dicomFileNameArray = fs.readdirSync(artifactsDir).filter(fn => fn.endsWith('.dcm')).filter(fn => fn.startsWith('file-name-0'));
+	let dicomFileNameArray = fs.readdirSync(artifactsDir).filter(fn => fn.endsWith('.dcm')).filter(fn => fn.startsWith('file-name'));
 	let dicomFilePathArray = dicomFileNameArray.map(file => `${artifactsDir}/${file}`);
 	inputUploadHandle.uploadFile(...dicomFilePathArray);
 	if (fs.existsSync(`${artifactsDir}/de-identified-files.zip`)) {
@@ -187,14 +186,14 @@ function waitFile(fileName) {
 	waitFile(`${artifactsDir}/de-identified-files.zip`);
 	const zipFileBuffer = new fs.readFileSync(`${artifactsDir}/de-identified-files.zip`);
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
-	assert.strictEqual(zipFileHash, 'd8e57a31420975a8da8d9e69741f56d4cec693d6dbc95c26b7190047189390f2');
+	assert.strictEqual(zipFileHash, '1fdd6a54f2623a56ad891ffbefe2ae22e698c518f8e9c815a9fa9e1da81f4573');
 	await page.screenshot({
 		path: `${artifactsDir}/puppeteer-screenshot.png`
 	});
 	const screenshotBuffer = new fs.readFileSync(`${artifactsDir}/puppeteer-screenshot.png`);
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
 	if (process.env.GITHUB_ACTIONS === undefined) {
-		assert.strictEqual(screenshotHash, '54e8170213ba9dfddb49b0f5cb4c420d9ba85121e1da292a8def400da3394fb6');
+		assert.strictEqual(screenshotHash, '64dd88b7d6c8f78e9230f86fe1507ee698d7542d17e5802ded571f6aab67e572');
 	}
 	await page.close();
 	await browser.close();
