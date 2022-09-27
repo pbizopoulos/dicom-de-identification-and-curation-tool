@@ -1,0 +1,17 @@
+input {
+	display: table-cell;
+}
+
+label {
+	display: table-cell;
+	text-align: right;
+}
+
+li {
+	display: table-row;
+}
+
+ul {
+	border: solid;
+	display: table;
+}

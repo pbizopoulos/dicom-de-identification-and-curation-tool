@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="width=device-width, initial-scale=1" name="viewport">
+		<title>DICOM de-identification and curation web application</title>
+		<link href="data:," rel="icon">
+		<link href="https://pbizopoulos.github.io/style.css" rel="stylesheet">
+		<link href="style.css" rel="stylesheet">
+		<script defer src="https://cdn.jsdelivr.net/npm/dcmjs@latest/build/dcmjs.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/jszip@latest/dist/jszip.min.js"></script>
+		<script defer src="node/release/nema-modified-table.js"></script>
+		<script defer src="script.js"></script>
+	</head>
+	<body>
+		<div id="div-header">
+			<div id="div-navigation">
+				<a href="https://cordis.europa.eu/project/id/952179">
+					<img src="incisive-header-logo.svg" height="20">
+				</a>
+				<b>DICOM de-identification and curation</b>
+			</div>
+			<div id="div-source-code-link">
+				<a href="https://github.com/pbizopoulos/dicom-de-identification-and-curation" id="sourceCodeUrl">Source code</a>
+			</div>
+		</div>
+		<ul>
+			<label>
+				<b>Input</b>
+			</label>
+			<li>
+				<label for="loadFilesInputFile">Load files:</label>
+				<input id="loadFilesInputFile" name="loadFilesInputFile" onchange="onloadFilesOrDirectory();" type="file" multiple>
+			</li>
+			<li>
+				<label for="loadDirectoryInputFile">Load directory:</label>
+				<input id="loadDirectoryInputFile" name="loadDirectoryInputFile" onchange="onloadFilesOrDirectory();" type="file" webkitdirectory directory multiple>
+			</li>
+			<li>
+				<label for="loadPatientIdsInputFile">Load patient IDs:</label>
+				<input accept=".csv" id="loadPatientIdsInputFile" name="loadPatientIdsInputFile" onchange="onloadPatientIdsInputFile();" type="file">
+			</li>
+			<label>
+				<b>De-identification options</b>
+			</label>
+			<li>
+				<label for="retainUidsInputCheckbox">Retain UIDs:</label>
+				<input id="retainUidsInputCheckbox" name="retainUidsInputCheckbox" type="checkbox" checked></input>
+			</li>
+			<li>
+				<label for="retainDatesInputCheckbox">Retain Dates:</label>
+				<input id="retainDatesInputCheckbox" name="retainDatesInputCheckbox" type="checkbox" checked></input>
+			</li>
+			<li>
+				<label for="retainDescriptionsInputCheckbox">Retain Descriptions:</label>
+				<input id="retainDescriptionsInputCheckbox" name="retainDescriptionsInputCheckbox" type="checkbox" checked></input>
+			</li>
+			<label>
+				<b>Curation options</b>
+			</label>
+			<li>
+				<label for="patientIdPrefixInputText">Patient ID prefix:</label>
+				<input id="patientIdPrefixInputText" name="patientIdPrefixInputText" placeholder="e.g. an organization ID" type="text">
+			</li>
+			<li style="opacity:0.3;">
+				<label for="dicomTagSavePathInputText">Save path:</label>
+				<input id="dicomTagSavePathInputText" name="dicomTagSavePathInputText" pattern="([0-9A-E]{8}/)*" type="text" placeholder="8 digit or capital letter groups separated with forward slash" value="00100020/00080060/00200011/" size="24" disabled="true">
+			</li>
+			<label>
+				<b>Output</b>
+			</label>
+			<li>
+				<label></label>
+				<button id="saveProcessedFilesAsZipButton">Save processed files as zip</button>
+			</li>
+			<li>
+				<label>Files processed:</label>
+				<span id=filesProcessedNumSpan>0/0</span>
+			</li>
+			<li>
+				<label>DICOM tag values removed:</label>
+				<span id=dicomTagValuesRemovedNumSpan>0</span>
+			</li>
+			<li>
+				<label>DICOM tag values replaced:</label>
+				<span id=dicomTagValuesReplacedNumSpan>0</span>
+			</li>
+		</ul>
+	</body>
+</html>

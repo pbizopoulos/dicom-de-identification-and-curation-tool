@@ -1,0 +1,13 @@
+on: [push, pull_request]
+
+jobs:
+  make:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 17
+      - name: Test
+        run: make
