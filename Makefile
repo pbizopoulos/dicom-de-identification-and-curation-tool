@@ -1,34 +1,40 @@
 .POSIX:
 
-.PHONY: clean help
+.PHONY: all check clean help
 
-artifacts_dir=artifacts
-code_file_name=index.js
+all: bin/all ## Build binaries.
 
-$(artifacts_dir)/code-run: $(code_file_name) .gitignore index.html package-lock.json script.js style.css ## Generate artifacts.
-	mkdir -p $(artifacts_dir)
-	ARTIFACTS_DIR=$(artifacts_dir) node $(code_file_name)
-	touch $(artifacts_dir)/code-run
+check: bin/check ## Check code.
 
-clean: ## Remove dependent directories.
-	rm -rf $(artifacts_dir)/ node_modules/ package-lock.json
+clean: ## Remove binaries.
+	rm -rf bin/
 
-help: ## Show all commands.
-	@sed -n '/sed/d; s/\$$(artifacts_dir)/$(artifacts_dir)/g; /##/p' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.* ## "}; {printf "%-30s# %s\n", $$1, $$2}'
-
-$(code_file_name):
-	printf '\n' > $(code_file_name)
+help: ## Show help.
+	@sed -n '/sed/d; /##/p' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.* ## "}; {printf "make %-10s# %s\n", $$1, $$2}'
 
 .gitignore:
-	printf '$(artifacts_dir)/\nnode_modules/\npackage-lock.json\n' > .gitignore
+	printf 'bin/\n' > .gitignore
 
-package-lock.json: package.json
-	npm install
+bin:
+	mkdir bin
+
+bin/all: .gitignore bin/package-lock.json index.js
+	NODE_PATH=bin/node_modules/ node index.js
+	touch bin/all
+
+bin/check: .gitignore bin/eslintrc.js bin/package-lock.json index.js
+	NODE_PATH=bin/node_modules/ npx --yes eslint --fix --config bin/eslintrc.js index.js
+	touch bin/check
+
+bin/eslintrc.js: bin
+	echo 'module.exports = { "env": { "browser": true, "node": true, "es2021": true }, "extends": "eslint:recommended", "overrides": [ ], "parserOptions": { "ecmaVersion": "latest" }, "rules": { "indent": [ "error", "tab" ], "linebreak-style": [ "error", "unix" ], "quotes": [ "error", "single" ], "semi": [ "error", "always" ] } }' > bin/eslintrc.js
+
+bin/package-lock.json: bin package.json
+	cp package.json bin/
+	npm install --prefix bin/
+
+index.js:
+	printf '\n' > index.js
 
 package.json:
 	printf '{}\n' > package.json
-
-$(artifacts_dir)/dir-hierarchy: $(artifacts_dir)/code-run ## Generate dir hierarchy of input and output for demonstration purposes.
-	cd $(artifacts_dir)/generated-data/ && tree -H . > ../dir-hierarchy-input.html && cd ..
-	mkdir -p $(artifacts_dir)/output/ && unzip $(artifacts_dir)/de-identified-files.zip -d $(artifacts_dir)/output/ && cd $(artifacts_dir)/output/ && tree -H . > ../dir-hierarchy-output.html && cd ..
-	touch $(artifacts_dir)/dir-hierarchy

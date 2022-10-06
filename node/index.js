@@ -7,7 +7,6 @@ const puppeteer = require('puppeteer');
 (async () => {
 	const browser = await puppeteer.launch({ headless: true });
 	const page = await browser.newPage();
-	const artifactsDir = process.env.ARTIFACTS_DIR;
 	await page.goto('https://dicom.nema.org/medical/dicom/current/output/chtml/part15/chapter_e.html');
 	const nemaModifiedTableObject = await page.evaluate(() => {
 		const rows = document.getElementsByTagName('table')[3].rows;
@@ -18,7 +17,7 @@ const puppeteer = require('puppeteer');
 		outputArray = outputArray.slice(1);
 		let outputObject = {};
 		for (let i = 0; i < outputArray.length; i++) {
-			dicomTag = outputArray[i][1].slice(1, 10).replace(',', '');
+			const dicomTag = outputArray[i][1].slice(1, 10).replace(',', '');
 			if (outputArray[i][12] === 'C') {
 				outputArray[i][12] = 'K';
 			}
@@ -29,14 +28,14 @@ const puppeteer = require('puppeteer');
 		outputObject['00100020'][0] = 'Z';
 		return outputObject;
 	});
-	fs.writeFileSync('release/nema-modified-table.js', `const nemaModifiedTableString = \'${JSON.stringify(nemaModifiedTableObject)}\';`);
+	fs.writeFileSync('dist/nema-modified-table.js', `const nemaModifiedTableString = '${JSON.stringify(nemaModifiedTableObject)}';`);
 	let nemaModifiedTableDefaultCsv = 'Tag,Action\n';
 	for (const property in nemaModifiedTableObject) {
 		if (!(nemaModifiedTableObject[property].includes('K'))) {
 			nemaModifiedTableDefaultCsv += `${property},${nemaModifiedTableObject[property][0]}\n`;
 		}
 	}
-	fs.writeFileSync('artifacts/nema-modified-table-default.csv', nemaModifiedTableDefaultCsv);
+	fs.writeFileSync('bin/nema-modified-table-default.csv', nemaModifiedTableDefaultCsv);
 	await page.close();
 	await browser.close();
 })();

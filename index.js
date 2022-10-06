@@ -143,21 +143,20 @@ function waitFile(fileName) {
 
 	const browser = await puppeteer.launch({ headless: true });
 	const page = await browser.newPage();
-	const artifactsDir = process.env.ARTIFACTS_DIR;
-	await page._client().send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.resolve(artifactsDir)});
-	if (!fs.existsSync(`${artifactsDir}/generated-data`)){
-		fs.mkdirSync(`${artifactsDir}/generated-data`);
+	await page._client().send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.resolve('bin')});
+	if (!fs.existsSync('bin/generated-data')){
+		fs.mkdirSync('bin/generated-data');
 	}
 	for (let i = 0; i < 1000; i++) {
 		let inputDicomFileName = `file-name-${i}.dcm`;
 		if (i % 7 != 0) {
 			const newPath = `file-path-${i % 7}`;
 			inputDicomFileName = `${newPath}/${inputDicomFileName}`;
-			if (!fs.existsSync(`${artifactsDir}/generated-data/${newPath}`)){
-				fs.mkdirSync(`${artifactsDir}/generated-data/${newPath}`);
+			if (!fs.existsSync(`bin/generated-data/${newPath}`)){
+				fs.mkdirSync(`bin/generated-data/${newPath}`);
 			}
 		}
-		if (!(fs.existsSync(`${artifactsDir}/generated-data/${inputDicomFileName}`))) {
+		if (!(fs.existsSync(`bin/generated-data/${inputDicomFileName}`))) {
 			let dataset = JSON.parse(jsonDataset);
 			dataset.PatientName = `John Doe ${i % 100}`;
 			dataset.PatientID = `${i % 100}`;
@@ -175,32 +174,32 @@ function waitFile(fileName) {
 			dataset.PixelData = pixelData.buffer;
 			const dicomDict = dcmjs.data.datasetToDict(dataset);
 			const buffer = Buffer.from(dicomDict.write());
-			fs.writeFileSync(`${artifactsDir}/generated-data/${inputDicomFileName}`, buffer);
+			fs.writeFileSync(`bin/generated-data/${inputDicomFileName}`, buffer);
 		}
 	}
 	await page.goto(`file:${path.join(__dirname, 'index.html')}`);
 	await page.waitForSelector('#loadFilesInputFile:not([disabled])');
 	const inputUploadHandle = await page.$('#loadFilesInputFile');
-	let dicomFileNameArray = fs.readdirSync(`${artifactsDir}/generated-data`).filter(fn => fn.endsWith('.dcm')).filter(fn => fn.startsWith('file-name'));
-	let dicomFilePathArray = dicomFileNameArray.map(file => `${artifactsDir}/generated-data/${file}`);
+	let dicomFileNameArray = fs.readdirSync('bin/generated-data').filter(fn => fn.endsWith('.dcm')).filter(fn => fn.startsWith('file-name'));
+	let dicomFilePathArray = dicomFileNameArray.map(file => `bin/generated-data/${file}`);
 	inputUploadHandle.uploadFile(...dicomFilePathArray);
 	await page.focus('#patientIdPrefixInputText');
 	await page.keyboard.type('001-');
-	if (fs.existsSync(`${artifactsDir}/de-identified-files.zip`)) {
-		await fs.unlinkSync(`${artifactsDir}/de-identified-files.zip`);
+	if (fs.existsSync('bin/de-identified-files.zip')) {
+		await fs.unlinkSync('bin/de-identified-files.zip');
 	}
 	await page.waitForSelector('#saveProcessedFilesAsZipButton').then(selector => selector.click());
-	waitFile(`${artifactsDir}/de-identified-files.zip`);
-	const zipFileBuffer = new fs.readFileSync(`${artifactsDir}/de-identified-files.zip`);
+	waitFile('bin/de-identified-files.zip');
+	const zipFileBuffer = new fs.readFileSync('bin/de-identified-files.zip');
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
 	assert.strictEqual(zipFileHash, 'aaddbaeb55e949bf4cb80d82a47202d5d86aa4fd1baed758795d0692844b08ab');
 	await page.screenshot({
-		path: `${artifactsDir}/puppeteer-screenshot.png`
+		path: 'bin/puppeteer-screenshot.png'
 	});
-	const screenshotBuffer = new fs.readFileSync(`${artifactsDir}/puppeteer-screenshot.png`);
+	const screenshotBuffer = new fs.readFileSync('bin/puppeteer-screenshot.png');
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
 	if (process.env.GITHUB_ACTIONS === undefined) {
-		assert.strictEqual(screenshotHash, 'd0cd78b8ca96393f61a878191d52feefca899ab0025e3a0a977bef6fa680ae2d');
+		assert.strictEqual(screenshotHash, 'e74fab5a3eeb97e1ee3a9412320bbd77520c33f5969d99e32edb44207cde2481');
 	}
 	await page.close();
 	await browser.close();

@@ -1,12 +1,12 @@
 # DICOM De-Identification and Curation
+https://pbizopoulos.github.io/dicom-de-identification-and-curation
 Private-oriented (data do not leave the device)
 No installation needed (only a modern browser is needed)
-https://incisive-certh-iti.github.io/dicom-de-identification-and-curation
 
 # End-user instructions:
-1. Visit https://incisive-certh-iti.github.io/dicom-de-identification-and-curation .
-2. Load your DICOM files or a folder that contains DICOM files.
-3. [Optional] Load your csv file that contains the de-identified patient names along with the original ones.
+1. Visit https://pbizopoulos.github.io/dicom-de-identification-and-curation .
+2. Load the DICOM files or the directory that contains the DICOM files.
+3. [Optional] Load the CSV file that contains the de-identified patient names along with the original ones.
 4. [Optional] Choose options for de-identification and curation.
 5. Save de-identified and curated data.
 
@@ -16,11 +16,9 @@ Make
 npm
  
 # Preparation
-git clone https://github.com/incisive-certh-iti/dicom-de-identification-and-curation
+git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation
 cd dicom-de-identification-and-curation/
 
-# Basic commands
-make		# Generate artifacts.
-make clean 	# Remove dependent directories.
-make help	# Show all commands.
-make -C node	# Generate latest modified NEMA table E.1-1.
+# Usage
+make help			# Show help for node.
+make help -f Makefile.html	# Show help for html.
