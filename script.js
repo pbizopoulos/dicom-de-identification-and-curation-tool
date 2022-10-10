@@ -1,10 +1,11 @@
 'use strict';
 
-const dicomTagArray = Object.keys(dcmjs.data.DicomMetaDictionary.nameMap);
 const dicomTagSavePathInputText = document.getElementById('dicomTagSavePathInputText');
 const dicomTagValuesRemovedNumSpan = document.getElementById('dicomTagValuesRemovedNumSpan');
 const dicomTagValuesReplacedNumSpan = document.getElementById('dicomTagValuesReplacedNumSpan');
 const filesProcessedNumSpan = document.getElementById('filesProcessedNumSpan');
+const loadFilesInputFile = document.getElementById('loadFilesInputFile');
+const loadPatientIdsInputFile = document.getElementById('loadPatientIdsInputFile');
 const nemaModifiedTableObject = JSON.parse(nemaModifiedTableString);
 const patientIdPrefixInputText = document.getElementById('patientIdPrefixInputText');
 const retainDatesInputCheckbox = document.getElementById('retainDatesInputCheckbox');
@@ -35,7 +36,37 @@ function hashCode(string) {
 	});
 }
 
-function onloadPatientIdsInputFile() {
+function saveData(blob, fileName) {
+	const a = document.createElement('a');
+	document.body.appendChild(a);
+	a.style = 'display: none';
+	const url = window.URL.createObjectURL(blob);
+	a.href = url;
+	a.download = fileName;
+	a.click();
+	window.URL.revokeObjectURL(url);
+}
+
+loadFilesInputFile.onchange = function() {
+	disableUI(true);
+	fileArray = event.currentTarget.files;
+	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
+	filesNum = fileArray.length;
+	if (filesNum === 0) {
+		return;
+	}
+	readerArray = [];
+	for (let i = 0; i < filesNum; i++) {
+		const reader = new FileReader();
+		reader.onload = function() {
+			readerArray[i] = reader.result;
+		};
+		reader.readAsArrayBuffer(fileArray[i]);
+	}
+	disableUI(false);
+};
+
+loadPatientIdsInputFile.onchange = function() {
 	const file = event.currentTarget.files[0];
 	if (file.length === 0) {
 		return;
@@ -50,37 +81,7 @@ function onloadPatientIdsInputFile() {
 		}
 	};
 	reader.readAsText(file);
-}
-
-function onloadFilesOrDirectory() {
-	disableUI(true);
-	fileArray = event.currentTarget.files;
-	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
-	filesNum = fileArray.length;
-	if (filesNum === 0) {
-		return;
-	}
-	readerArray = [];
-	for (let i = 0; i < filesNum; i++) {
-		const reader = new FileReader();
-		reader.onload = function() {
-			readerArray[i] = reader.result;
-		}
-		reader.readAsArrayBuffer(fileArray[i]);
-	}
-	disableUI(false);
-}
-
-function saveData(blob, fileName) {
-	const a = document.createElement('a');
-	document.body.appendChild(a);
-	a.style = 'display: none';
-	const url = window.URL.createObjectURL(blob);
-	a.href = url;
-	a.download = fileName;
-	a.click();
-	window.URL.revokeObjectURL(url);
-}
+};
 
 saveProcessedFilesAsZipButton.onclick = function() {
 	disableUI(true);
@@ -102,7 +103,7 @@ saveProcessedFilesAsZipButton.onclick = function() {
 				if (property in dicomDictArray[i].dict) {
 					const patientId = dicomDictArray[i].dict[property].Value[0];
 					if (!(patientId in patientIdObject)) {
-						const idNew = Object.keys(patientIdObject).length.toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping: false})
+						const idNew = Object.keys(patientIdObject).length.toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping: false});
 						patientIdObject[patientId] = `${patientIdPrefixInputText.value}${idNew}`;
 					}
 					dicomDictArray[i].dict[property].Value[0] = patientIdObject[patientId];
@@ -129,24 +130,24 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			const dicomTagValueSavePath = dicomTagSavePathArray.map(x => dicomDictArray[i].dict[x].Value[0]).join('/') + '/';
 			const dicomTagValueSavePathArray = dicomTagValueSavePath.split('/');
 			for (let j = 1; j < dicomTagValueSavePathArray.length; j++) {
-				zip.file(dicomTagValueSavePathArray.slice(0, j).join('/') + '/', '', {date: new Date("January 02, 2000 00:00:00")});
+				zip.file(dicomTagValueSavePathArray.slice(0, j).join('/') + '/', '', {date: new Date('January 02, 2000 00:00:00')});
 			}
-			zip.file(`${dicomTagValueSavePath}${hex}.dcm`, dicomDictArray[i].write({allowInvalidVRLength: true}), {date: new Date("January 02, 2000 00:00:00")});
+			zip.file(`${dicomTagValueSavePath}${hex}.dcm`, dicomDictArray[i].write({allowInvalidVRLength: true}), {date: new Date('January 02, 2000 00:00:00')});
 			filesProcessedNumSpan.textContent = `${i+1}/${filesNum}`;
 			if (i === filesNum - 1) {
 				dicomTagValuesRemovedNumSpan.textContent = dicomTagValuesRemovedNum;
 				dicomTagValuesReplacedNumSpan.textContent = dicomTagValuesReplacedNum;
-				const patientIdString = Object.entries(patientIdObject).map((patientId, index) => patientId).join('\n') + '\n';
+				const patientIdString = Object.entries(patientIdObject).map((patientId) => patientId).join('\n') + '\n';
 				const blob = new Blob([patientIdString]);
-				zip.file('patient-ids.csv', blob, {date: new Date("January 02, 2000 00:00:00")});
+				zip.file('patient-ids.csv', blob, {date: new Date('January 02, 2000 00:00:00')});
 				zip.generateAsync({type:'blob'})
 					.then(function (blob) {
 						saveData(blob, 'de-identified-files.zip');
 						disableUI(false);
 					});
 			}
-		})
+		});
 	}
-}
+};
 
 disableUI(true);
