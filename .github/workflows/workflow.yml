@@ -17,3 +17,9 @@ jobs:
         run: |
           make -C node/
           make
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: bin/de-identified-files.zip
+          retention-days: 1
