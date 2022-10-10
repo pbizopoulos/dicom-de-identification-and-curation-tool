@@ -2,15 +2,18 @@
 
 .PHONY: all check clean help
 
-all: bin/all ## Build binaries.
+all: bin/all
 
-check: bin/check ## Check code.
+check: bin/check
 
-clean: ## Remove binaries.
+clean:
 	rm -rf bin/
 
-help: ## Show help.
-	@sed -n '/sed/d; /##/p' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.* ## "}; {printf "make %-10s# %s\n", $$1, $$2}'
+help:
+	@printf 'make all 	# Build binaries.\n'
+	@printf 'make check 	# Check code.\n'
+	@printf 'make clean 	# Remove binaries.\n'
+	@printf 'make help 	# Show help.\n'
 
 .gitignore:
 	printf 'bin/\n' > .gitignore

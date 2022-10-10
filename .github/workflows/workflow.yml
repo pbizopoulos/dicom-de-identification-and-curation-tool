@@ -9,11 +9,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 17
-      - name: Check code
+      - name: Check code.
         run: |
           make -C node/ check
           make check
-      - name: Test binary
+      - name: Build binaries.
         run: |
           make -C node/
           make
