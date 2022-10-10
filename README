@@ -13,6 +13,7 @@ No installation needed (only a modern browser is needed)
 # Requirements
 POSIX mandatory utilities
 Make
+Docker
 npm
  
 # Preparation
@@ -21,4 +22,5 @@ cd dicom-de-identification-and-curation/
 
 # Usage
 make help			# Show help for node.
+make help -C node/		# Show help for node.
 make help -f Makefile.html	# Show help for html.

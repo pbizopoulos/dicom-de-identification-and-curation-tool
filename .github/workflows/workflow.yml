@@ -9,17 +9,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Check code.
+      - name: Check code and build binaries for node.
+        run: |
+          make check
+          make
+      - name: Check code and build binaries for node.
         run: |
           make -C node/ check
-          make check
-      - name: Build binaries.
-        run: |
           make -C node/
-          make
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-artifact
-          path: bin/de-identified-files.zip
-          retention-days: 1
+      - name: Check code and build binaries for html.
+        run: |
+          make -f Makefile.html check
+          make -f Makefile.html
