@@ -192,7 +192,9 @@ function waitFile(fileName) {
 	waitFile('bin/de-identified-files.zip');
 	const zipFileBuffer = new fs.readFileSync('bin/de-identified-files.zip');
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
-	// assert.strictEqual(zipFileHash, 'aaddbaeb55e949bf4cb80d82a47202d5d86aa4fd1baed758795d0692844b08ab');
+	if (process.env.GITHUB_ACTIONS === undefined) {
+		assert.strictEqual(zipFileHash, 'aaddbaeb55e949bf4cb80d82a47202d5d86aa4fd1baed758795d0692844b08ab');
+	}
 	await page.screenshot({
 		path: 'bin/puppeteer-screenshot.png'
 	});
