@@ -17,7 +17,7 @@ jobs:
         run: |
           make -C node/ check
           make -C node/
-      - name: Check code and build binaries for html.
+      - name: Check code and build binaries for browser.
         run: |
-          make -f Makefile.html check
-          make -f Makefile.html
+          make -f Makefile.browser check
+          make -f Makefile.browser

@@ -3,8 +3,10 @@
 .PHONY: all check clean help
 
 container_engine = docker # For podman first execute `printf 'unqualified-search-registries=["docker.io"]\n' > /etc/containers/registries.conf.d/docker.conf`
+css_target = $$(test -s style.css && printf '%s' 'bin/check-css')
 debug = 1
 debug_args = $$(test -t 0 && printf '%s' '--interactive --tty')
+js_target = $$(test -s script.js && printf '%s' 'bin/check-js')
 npx_timeout_command = $$(test $(debug) = 1 && printf '%s' '& sleep 1; kill $$!')
 user_arg = $$(test $(container_engine) = 'docker' && printf '%s' "--user $$(id -u):$$(id -g)")
 work_dir = /work
@@ -49,8 +51,20 @@ bin/cert.pem: bin
 		--workdir $(work_dir)/ \
 		alpine/openssl req -newkey rsa:2048 -subj "/C=../ST=../L=.../O=.../OU=.../CN=.../emailAddress=..." -new -nodes -x509 -days 3650 -keyout bin/key.pem -out bin/cert.pem
 
-bin/check: .dockerignore .gitignore bin bin/check-html bin/check-js
-	touch bin/check
+bin/check: .dockerignore .gitignore bin
+	make -f $(MAKEFILE_LIST) bin/check-html $(css_target) $(js_target)
+
+bin/check-css: .dockerignore .gitignore bin style.css
+	$(container_engine) container run \
+		$(debug_args) \
+		$(user_arg) \
+		--env HOME=$(work_dir)/bin \
+		--env NODE_PATH=$(work_dir)/bin \
+		--rm \
+		--volume $$(pwd):$(work_dir)/ \
+		--workdir $(work_dir)/ \
+		node npx --yes css-validator --profile css3svg style.css
+	touch bin/check-css
 
 bin/check-html: .dockerignore .gitignore bin index.html
 	$(container_engine) container run \
