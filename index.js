@@ -143,6 +143,9 @@ function waitFile(fileName) {
 
 	const browser = await puppeteer.launch({ headless: true });
 	const page = await browser.newPage();
+	page.on('pageerror', pageerr => {
+		assert.fail(pageerr);
+	})
 	await page._client().send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.resolve('bin')});
 	if (!fs.existsSync('bin/generated-data')){
 		fs.mkdirSync('bin/generated-data');
