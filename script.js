@@ -4,6 +4,7 @@ const dicomTagSavePathInputText = document.getElementById('dicomTagSavePathInput
 const dicomTagValuesRemovedNumSpan = document.getElementById('dicomTagValuesRemovedNumSpan');
 const dicomTagValuesReplacedNumSpan = document.getElementById('dicomTagValuesReplacedNumSpan');
 const filesProcessedNumSpan = document.getElementById('filesProcessedNumSpan');
+const loadDirectoryInputFile = document.getElementById('loadDirectoryInputFile');
 const loadFilesInputFile = document.getElementById('loadFilesInputFile');
 const loadPatientIdsInputFile = document.getElementById('loadPatientIdsInputFile');
 const nemaModifiedTableObject = JSON.parse(nemaModifiedTableString);
@@ -17,6 +18,8 @@ let fileArray = [];
 let filesNum = 0;
 let patientIdObject = {};
 let readerArray = [];
+loadFilesInputFile.onchange = onloadFilesOrDirectory;
+loadDirectoryInputFile.onchange = onloadFilesOrDirectory;
 
 function disableUI(argument) {
 	retainDatesInputCheckbox.disabled = argument;
@@ -36,18 +39,7 @@ function hashCode(string) {
 	});
 }
 
-function saveData(blob, fileName) {
-	const a = document.createElement('a');
-	document.body.appendChild(a);
-	a.style = 'display: none';
-	const url = window.URL.createObjectURL(blob);
-	a.href = url;
-	a.download = fileName;
-	a.click();
-	window.URL.revokeObjectURL(url);
-}
-
-loadFilesInputFile.onchange = function() {
+function onloadFilesOrDirectory() {
 	disableUI(true);
 	fileArray = event.currentTarget.files;
 	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
@@ -64,7 +56,18 @@ loadFilesInputFile.onchange = function() {
 		reader.readAsArrayBuffer(fileArray[i]);
 	}
 	disableUI(false);
-};
+}
+
+function saveData(blob, fileName) {
+	const a = document.createElement('a');
+	document.body.appendChild(a);
+	a.style = 'display: none';
+	const url = window.URL.createObjectURL(blob);
+	a.href = url;
+	a.download = fileName;
+	a.click();
+	window.URL.revokeObjectURL(url);
+}
 
 loadPatientIdsInputFile.onchange = function() {
 	const file = event.currentTarget.files[0];
