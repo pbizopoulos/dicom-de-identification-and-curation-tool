@@ -47,7 +47,7 @@ function saveData(blob, fileName) {
 	window.URL.revokeObjectURL(url);
 }
 
-loadDirectoryInputFile.onchange = function() {
+loadFilesInputFile.onchange = function() {
 	disableUI(true);
 	fileArray = event.currentTarget.files;
 	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
