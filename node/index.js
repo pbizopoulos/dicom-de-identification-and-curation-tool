@@ -18,11 +18,14 @@ const puppeteer = require('puppeteer');
 		let outputObject = {};
 		for (let i = 0; i < outputArray.length; i++) {
 			const dicomTag = outputArray[i][1].slice(1, 10).replace(',', '');
+			if (outputArray[i][9] === 'C') {
+				outputArray[i][9] = 'K';
+			}
 			if (outputArray[i][12] === 'C') {
 				outputArray[i][12] = 'K';
 			}
 			outputArray[i][4] = 'X';
-			outputObject[dicomTag] = [outputArray[i][4], outputArray[i][6], outputArray[i][10], outputArray[i][12]];
+			outputObject[dicomTag] = [outputArray[i][4], outputArray[i][6], outputArray[i][9], outputArray[i][10], outputArray[i][12]];
 		}
 		outputObject['00100010'][0] = 'Z';
 		outputObject['00100020'][0] = 'Z';

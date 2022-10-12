@@ -196,7 +196,7 @@ function waitFile(fileName) {
 	const zipFileBuffer = new fs.readFileSync('bin/de-identified-files.zip');
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
 	if (process.env.GITHUB_ACTIONS === undefined) {
-		assert.strictEqual(zipFileHash, 'aaddbaeb55e949bf4cb80d82a47202d5d86aa4fd1baed758795d0692844b08ab');
+		assert.strictEqual(zipFileHash, '38ea3c0f0c41ae1b7620d7259d46c5647247aae5b5a6582c9833850be2a216c0');
 	}
 	await page.screenshot({
 		path: 'bin/puppeteer-screenshot.png'
@@ -204,7 +204,7 @@ function waitFile(fileName) {
 	const screenshotBuffer = new fs.readFileSync('bin/puppeteer-screenshot.png');
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
 	if (process.env.GITHUB_ACTIONS === undefined) {
-		assert.strictEqual(screenshotHash, 'e74fab5a3eeb97e1ee3a9412320bbd77520c33f5969d99e32edb44207cde2481');
+		assert.strictEqual(screenshotHash, 'e58b50245cecc8ac3f581bf8df6ef5df934d288304a86b5242016793c8430eb0');
 	}
 	await page.close();
 	await browser.close();

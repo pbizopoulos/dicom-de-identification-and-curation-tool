@@ -11,6 +11,7 @@ const nemaModifiedTableObject = JSON.parse(nemaModifiedTableString);
 const patientIdPrefixInputText = document.getElementById('patientIdPrefixInputText');
 const retainDatesInputCheckbox = document.getElementById('retainDatesInputCheckbox');
 const retainDescriptionsInputCheckbox = document.getElementById('retainDescriptionsInputCheckbox');
+const retainPatientCharacteristicsInputCheckbox = document.getElementById('retainPatientCharacteristicsInputCheckbox');
 const retainUidsInputCheckbox = document.getElementById('retainUidsInputCheckbox');
 const saveProcessedFilesAsZipButton = document.getElementById('saveProcessedFilesAsZipButton');
 let dicomDictArray = [];
@@ -24,6 +25,7 @@ loadDirectoryInputFile.onchange = onloadFilesOrDirectory;
 function disableUI(argument) {
 	retainDatesInputCheckbox.disabled = argument;
 	retainDescriptionsInputCheckbox.disabled = argument;
+	retainPatientCharacteristicsInputCheckbox.disabled = argument;
 	retainUidsInputCheckbox.disabled = argument;
 	saveProcessedFilesAsZipButton.disabled = argument;
 }
@@ -96,9 +98,11 @@ saveProcessedFilesAsZipButton.onclick = function() {
 		for (const property in nemaModifiedTableObject) {
 			if (nemaModifiedTableObject[property][1] === 'K' && retainUidsInputCheckbox.checked) {
 				continue;
-			} else if (nemaModifiedTableObject[property][2] === 'K' && retainDatesInputCheckbox.checked) {
+			} else if (nemaModifiedTableObject[property][2] === 'K' && retainPatientCharacteristicsInputCheckbox.checked) {
 				continue;
-			} else if (nemaModifiedTableObject[property][3] === 'K' && retainDescriptionsInputCheckbox.checked) {
+			} else if (nemaModifiedTableObject[property][3] === 'K' && retainDatesInputCheckbox.checked) {
+				continue;
+			} else if (nemaModifiedTableObject[property][4] === 'K' && retainDescriptionsInputCheckbox.checked) {
 				continue;
 			} else if (property === '00100010') {
 				continue;
