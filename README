@@ -1,10 +1,10 @@
-# DICOM De-Identification and Curation
-https://pbizopoulos.github.io/dicom-de-identification-and-curation
+# DICOM De-Identification and Curation tool
+https://pbizopoulos.github.io/dicom-de-identification-and-curation-tool
 Private-oriented (data do not leave the device)
 No installation needed (only a modern browser is needed)
 
 # End-user instructions:
-1. Visit https://pbizopoulos.github.io/dicom-de-identification-and-curation .
+1. Visit https://pbizopoulos.github.io/dicom-de-identification-and-curation-tool .
 2. Load the DICOM files or the directory that contains the DICOM files.
 3. [Optional] Load the CSV file that contains the de-identified patient names along with the original ones.
 4. [Optional] Choose options for de-identification and curation.
@@ -17,8 +17,8 @@ Docker
 npm
  
 # Preparation
-git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation
-cd dicom-de-identification-and-curation/
+git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation-tool
+cd dicom-de-identification-and-curation-tool/
 
 # Usage
 make help			# Show help for node.
