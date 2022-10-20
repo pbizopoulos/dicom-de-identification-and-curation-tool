@@ -15,9 +15,9 @@ jobs:
           make
       - name: Check code and build binaries for node.
         run: |
-          make -C node/ check
-          make -C node/
+          make -C docs/node/ check
+          make -C docs/node/
       - name: Check code and build binaries for browser.
         run: |
-          make -f Makefile.browser check
-          make -f Makefile.browser
+          make -C docs/ check
+          make -C docs/

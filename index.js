@@ -180,7 +180,7 @@ function waitFile(fileName) {
 			fs.writeFileSync(`bin/generated-data/${inputDicomFileName}`, buffer);
 		}
 	}
-	await page.goto(`file:${path.join(__dirname, 'index.html')}`);
+	await page.goto(`file:${path.join(__dirname, 'docs/index.html')}`);
 	await page.waitForSelector('#loadFilesInputFile:not([disabled])');
 	const inputUploadHandle = await page.$('#loadFilesInputFile');
 	let dicomFileNameArray = fs.readdirSync('bin/generated-data').filter(fn => fn.endsWith('.dcm')).filter(fn => fn.startsWith('file-name'));
