@@ -1,5 +1,9 @@
 version: 2
 updates:
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
@@ -9,6 +13,6 @@ updates:
     schedule:
       interval: 'monthly'
   - package-ecosystem: 'npm'
-    directory: '/node/'
+    directory: '/docs/node/'
     schedule:
       interval: 'monthly'

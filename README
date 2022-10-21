@@ -14,7 +14,6 @@ No installation needed (only a modern browser is needed)
 POSIX mandatory utilities
 Make
 Docker
-npm
  
 # Preparation
 git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation-tool
