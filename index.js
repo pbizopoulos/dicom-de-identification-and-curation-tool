@@ -196,9 +196,7 @@ function waitFile(fileName) {
 	const zipFileBuffer = new fs.readFileSync('bin/de-identified-files.zip');
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
 	assert.strictEqual(zipFileHash, 'ef0806c2b2fc2b691f94312b6c89c0b3334c39c8f2e7223b9187488b8ff823ff');
-	await page.screenshot({
-		path: 'bin/puppeteer-screenshot.png'
-	});
+	await page.screenshot({path: 'bin/puppeteer-screenshot.png'});
 	const screenshotBuffer = new fs.readFileSync('bin/puppeteer-screenshot.png');
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
 	assert.strictEqual(screenshotHash, '5f0fe731716e69d6190917af358127819f50a37c814dfa4da4a2de27e6579ae8');
