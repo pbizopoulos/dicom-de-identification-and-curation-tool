@@ -18,6 +18,7 @@ bin/all: .dockerignore .gitignore bin Dockerfile index.js package.json
 		--init \
 		--cap-add=SYS_ADMIN \
 		--env NODE_PATH=/home/pptruser/node_modules/ \
+		--env PUPPETEER_CACHE_DIR=/home/pptruser/.cache/puppeteer/ \
 		--rm \
 		--volume $$(pwd):$(work_dir)/ \
 		--workdir $(work_dir)/ \
