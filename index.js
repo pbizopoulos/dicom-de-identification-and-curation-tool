@@ -181,17 +181,17 @@ function waitFile(fileName) {
 		}
 	}
 	await page.goto(`file:${path.join(__dirname, 'docs/index.html')}`);
-	await page.waitForSelector('#loadFilesInputFile:not([disabled])');
-	const inputUploadHandle = await page.$('#loadFilesInputFile');
+	await page.waitForSelector('#load-files-input-file:not([disabled])');
+	const inputUploadHandle = await page.$('#load-files-input-file');
 	let dicomFileNameArray = fs.readdirSync('bin/generated-data').filter(fn => fn.endsWith('.dcm')).filter(fn => fn.startsWith('file-name'));
 	let dicomFilePathArray = dicomFileNameArray.map(file => `bin/generated-data/${file}`);
 	inputUploadHandle.uploadFile(...dicomFilePathArray);
-	await page.focus('#patientIdPrefixInputText');
+	await page.focus('#patient-id-prefix-input-text');
 	await page.keyboard.type('001-');
 	if (fs.existsSync('bin/de-identified-files.zip')) {
 		await fs.unlinkSync('bin/de-identified-files.zip');
 	}
-	await page.waitForSelector('#saveProcessedFilesAsZipButton').then(selector => selector.click());
+	await page.waitForSelector('#save-processed-files-as-zip-button').then(selector => selector.click());
 	waitFile('bin/de-identified-files.zip');
 	const zipFileBuffer = new fs.readFileSync('bin/de-identified-files.zip');
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
