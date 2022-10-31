@@ -1,9 +1,10 @@
 .POSIX:
 
-.PHONY: all check clean help
+.PHONY: all check clean
 
-container_engine = docker # For podman first execute $(printf 'unqualified-search-registries=["docker.io"]\n' > /etc/containers/registries.conf.d/docker.conf)
+container_engine = docker
 debug_args = $$(test -t 0 && printf '%s' '--interactive --tty')
+js_file_name = index.js
 user_arg = $$(test $(container_engine) = 'docker' && printf '%s' "--user $$(id -u):$$(id -g)")
 work_dir = /work
 
@@ -11,7 +12,22 @@ all: bin/all
 
 check: bin/check
 
-bin/all: .dockerignore .gitignore bin Dockerfile index.js package.json
+clean:
+	rm -rf bin/
+
+$(js_file_name):
+	touch $(js_file_name)
+
+.dockerignore:
+	printf '*\n!package.json\n' > .dockerignore
+
+.gitignore:
+	printf 'bin/\n' > .gitignore
+
+bin:
+	mkdir bin
+
+bin/all: $(js_file_name) .dockerignore .gitignore bin Dockerfile package.json
 	$(container_engine) container run \
 		$(debug_args) \
 		$(user_arg) \
@@ -22,10 +38,10 @@ bin/all: .dockerignore .gitignore bin Dockerfile index.js package.json
 		--rm \
 		--volume $$(pwd):$(work_dir)/ \
 		--workdir $(work_dir)/ \
-		$$($(container_engine) image build --quiet .) node index.js
+		$$($(container_engine) image build --quiet .) node $(js_file_name)
 	touch bin/all
 
-bin/check: .dockerignore .gitignore bin bin/eslintrc.js index.js
+bin/check: $(js_file_name) .dockerignore .gitignore bin bin/eslintrc.js
 	$(container_engine) container run \
 		$(debug_args) \
 		$(user_arg) \
@@ -34,32 +50,11 @@ bin/check: .dockerignore .gitignore bin bin/eslintrc.js index.js
 		--rm \
 		--volume $$(pwd):$(work_dir)/ \
 		--workdir $(work_dir)/ \
-		node npx --yes eslint --fix --config bin/eslintrc.js index.js
+		node npx --yes eslint --fix --config bin/eslintrc.js $(js_file_name)
 	touch bin/check
 
 bin/eslintrc.js: bin
 	echo 'module.exports = { "env": { "browser": true, "node": true, "es2021": true }, "extends": "eslint:recommended", "overrides": [ ], "parserOptions": { "ecmaVersion": "latest" }, "rules": { "indent": [ "error", "tab" ], "linebreak-style": [ "error", "unix" ], "quotes": [ "error", "single" ], "semi": [ "error", "always" ], "no-undef": 0 } }' > bin/eslintrc.js
-
-clean:
-	rm -rf bin/
-
-help:
-	@printf 'make all 	# Build binaries.\n'
-	@printf 'make check 	# Check code.\n'
-	@printf 'make clean 	# Remove binaries.\n'
-	@printf 'make help 	# Show help.\n'
-
-bin:
-	mkdir bin
-
-index.js:
-	printf '\n' > index.js
-
-.dockerignore:
-	printf '*\n!package.json\n' > .dockerignore
-
-.gitignore:
-	printf 'bin/\n' > .gitignore
 
 Dockerfile:
 	printf 'FROM ghcr.io/puppeteer/puppeteer\nCOPY package.json .\nRUN npm install\n' > Dockerfile

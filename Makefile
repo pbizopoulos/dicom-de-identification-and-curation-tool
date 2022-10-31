@@ -16,10 +16,10 @@ clean:
 	rm -rf bin/
 
 help:
-	@printf 'make all 	# Build binaries.\n'
-	@printf 'make check 	# Check code.\n'
-	@printf 'make clean 	# Remove binaries.\n'
-	@printf 'make help 	# Show help.\n'
+	@printf 'make all	# Build binaries.\n'
+	@printf 'make check	# Check code.\n'
+	@printf 'make clean	# Remove binaries.\n'
+	@printf 'make help	# Show help.\n'
 
 $(js_file_name):
 	touch $(js_file_name)
