@@ -16,11 +16,11 @@ const retainUidsInputCheckbox = document.getElementById('retain-uids-input-check
 const saveProcessedFilesAsZipButton = document.getElementById('save-processed-files-as-zip-button');
 let dicomDictArray = [];
 let fileArray = [];
+let fileReaderArray = [];
 let filesNum = 0;
 let patientIdObject = {};
-let readerArray = [];
-loadFilesInputFile.onchange = onloadFilesOrDirectory;
 loadDirectoryInputFile.onchange = onloadFilesOrDirectory;
+loadFilesInputFile.onchange = onloadFilesOrDirectory;
 
 function disableUI(argument) {
 	retainDatesInputCheckbox.disabled = argument;
@@ -49,13 +49,13 @@ function onloadFilesOrDirectory() {
 	if (filesNum === 0) {
 		return;
 	}
-	readerArray = [];
+	fileReaderArray = [];
 	for (let i = 0; i < filesNum; i++) {
-		const reader = new FileReader();
-		reader.onload = function() {
-			readerArray[i] = reader.result;
+		const fileReader = new FileReader();
+		fileReader.readAsArrayBuffer(fileArray[i]);
+		fileReader.onload = function() {
+			fileReaderArray[i] = fileReader.result;
 		};
-		reader.readAsArrayBuffer(fileArray[i]);
 	}
 	disableUI(false);
 }
@@ -76,8 +76,9 @@ loadPatientIdsInputFile.onchange = function() {
 	if (file.length === 0) {
 		return;
 	}
-	const reader = new FileReader();
-	reader.onload = function (e) {
+	const fileReader = new FileReader();
+	fileReader.readAsText(file);
+	fileReader.onload = function (e) {
 		const text = e.target.result;
 		const rowArray = text.split('\n');
 		for (let i = 0; i < rowArray.length; i++) {
@@ -85,7 +86,6 @@ loadPatientIdsInputFile.onchange = function() {
 			patientIdObject[rowElementArray[0]] = rowElementArray[1];
 		}
 	};
-	reader.readAsText(file);
 };
 
 saveProcessedFilesAsZipButton.onclick = function() {
@@ -94,7 +94,7 @@ saveProcessedFilesAsZipButton.onclick = function() {
 	let dicomTagValuesRemovedNum = 0;
 	let dicomTagValuesReplacedNum = 0;
 	for (let i = 0; i < filesNum; i++) {
-		dicomDictArray[i] = dcmjs.data.DicomMessage.readFile(readerArray[i]);
+		dicomDictArray[i] = dcmjs.data.DicomMessage.readFile(fileReaderArray[i]);
 		for (const property in nemaModifiedTableObject) {
 			if (nemaModifiedTableObject[property][1] === 'K' && retainUidsInputCheckbox.checked) {
 				continue;
