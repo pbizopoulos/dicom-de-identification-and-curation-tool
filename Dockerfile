@@ -1,3 +1,3 @@
-FROM ghcr.io/puppeteer/puppeteer:19.1.0
+FROM ghcr.io/puppeteer/puppeteer:19.2.0
 COPY package.json .
 RUN npm install
