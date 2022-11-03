@@ -141,7 +141,7 @@ function waitFile(fileName) {
 			}
 	}`;
 
-	const browser = await puppeteer.launch({ headless: true });
+	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
 	page.on('pageerror', pageerr => {
 		assert.fail(pageerr);

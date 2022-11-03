@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer');
 
 
 (async () => {
-	const browser = await puppeteer.launch({ headless: true });
+	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
 	await page.goto('https://dicom.nema.org/medical/dicom/current/output/chtml/part15/chapter_e.html');
 	const nemaModifiedTableObject = await page.evaluate(() => {
