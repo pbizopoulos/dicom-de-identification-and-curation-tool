@@ -60,9 +60,10 @@ function onloadFilesOrDirectory() {
 	disableUI(false);
 }
 
-function saveData(blob, fileName) {
+function saveData(data, fileName) {
 	const a = document.createElement('a');
 	document.body.appendChild(a);
+	const blob = new Blob(data);
 	const url = window.URL.createObjectURL(blob);
 	a.href = url;
 	a.download = fileName;
@@ -144,11 +145,10 @@ saveProcessedFilesAsZipButton.onclick = function() {
 				dicomTagValuesRemovedNumSpan.textContent = dicomTagValuesRemovedNum;
 				dicomTagValuesReplacedNumSpan.textContent = dicomTagValuesReplacedNum;
 				const patientIdString = Object.entries(patientIdObject).map((patientId) => patientId).join('\n') + '\n';
-				const blob = new Blob([patientIdString]);
-				zip.file('patient-ids.csv', blob, {date: new Date('January 02, 2000 00:00:00')});
-				zip.generateAsync({type:'blob'})
-					.then(function (blob) {
-						saveData(blob, 'de-identified-files.zip');
+				zip.file('patient-ids.csv', patientIdString, {date: new Date('January 02, 2000 00:00:00')});
+				zip.generateAsync({type:'arraybuffer'})
+					.then(function (arraybuffer) {
+						saveData([arraybuffer], 'de-identified-files.zip');
 						disableUI(false);
 					});
 			}
