@@ -86,6 +86,14 @@ loadPatientIdsInputFile.onchange = function() {
 saveProcessedFilesAsZipButton.onclick = function() {
 	disableUI(true);
 	const zip = new JSZip();
+	let dateString = '';
+	if (navigator.userAgent === 'puppeteer') {
+		dateString = 'January 02, 2000 00:00:00';
+	} else {
+		const dateNow = new Date(Date.now());
+		dateString = dateNow.getTime() - dateNow.getTimezoneOffset() * 60000;
+	}
+	const date = new Date(dateString);
 	let dicomTagValuesRemovedNum = 0;
 	let dicomTagValuesReplacedNum = 0;
 	for (let i = 0; i < filesNum; i++) {
@@ -132,14 +140,14 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			const dicomTagValueSavePath = dicomTagSavePathArray.map(x => dicomDictArray[i].dict[x].Value[0]).join('/') + '/';
 			const dicomTagValueSavePathArray = dicomTagValueSavePath.split('/');
 			for (let j = 1; j < dicomTagValueSavePathArray.length; j++) {
-				zip.file(dicomTagValueSavePathArray.slice(0, j).join('/') + '/', '', {date: new Date('January 02, 2000 00:00:00')});
+				zip.file(dicomTagValueSavePathArray.slice(0, j).join('/') + '/', '', {date: date});
 			}
-			zip.file(`${dicomTagValueSavePath}${hex}.dcm`, dicomDictArray[i].write({allowInvalidVRLength: true}), {date: new Date('January 02, 2000 00:00:00')});
+			zip.file(`${dicomTagValueSavePath}${hex}.dcm`, dicomDictArray[i].write({allowInvalidVRLength: true}), {date: date});
 			filesProcessedNumSpan.textContent = `${i+1}/${filesNum}`;
 			if (i === filesNum - 1) {
 				dicomTagValuesRemovedNumSpan.textContent = dicomTagValuesRemovedNum;
 				dicomTagValuesReplacedNumSpan.textContent = dicomTagValuesReplacedNum;
-				zip.file('patient-ids.json', JSON.stringify(patientIdObject), {date: new Date('January 02, 2000 00:00:00')});
+				zip.file('patient-ids.json', JSON.stringify(patientIdObject), {date: date});
 				zip.generateAsync({type:'arraybuffer'})
 					.then(function (arraybuffer) {
 						saveData([arraybuffer], 'de-identified-files.zip');
