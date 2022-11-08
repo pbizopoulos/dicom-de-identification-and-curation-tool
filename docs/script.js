@@ -79,12 +79,7 @@ loadPatientIdsInputFile.onchange = function() {
 	const fileReader = new FileReader();
 	fileReader.readAsText(file);
 	fileReader.onload = function (e) {
-		const text = e.target.result;
-		const rowArray = text.split('\n');
-		for (let i = 0; i < rowArray.length; i++) {
-			const rowElementArray = rowArray[i].split(',');
-			patientIdObject[rowElementArray[0]] = rowElementArray[1];
-		}
+		patientIdObject = JSON.parse(e.target.result);
 	};
 };
 
@@ -144,8 +139,7 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			if (i === filesNum - 1) {
 				dicomTagValuesRemovedNumSpan.textContent = dicomTagValuesRemovedNum;
 				dicomTagValuesReplacedNumSpan.textContent = dicomTagValuesReplacedNum;
-				const patientIdString = Object.entries(patientIdObject).map((patientId) => patientId).join('\n') + '\n';
-				zip.file('patient-ids.csv', patientIdString, {date: new Date('January 02, 2000 00:00:00')});
+				zip.file('patient-ids.json', JSON.stringify(patientIdObject), {date: new Date('January 02, 2000 00:00:00')});
 				zip.generateAsync({type:'arraybuffer'})
 					.then(function (arraybuffer) {
 						saveData([arraybuffer], 'de-identified-files.zip');
