@@ -22,6 +22,14 @@ let sessionObject = {};
 loadDirectoryInputFile.oninput = oninputFilesOrDirectory;
 loadFilesInputFile.oninput = oninputFilesOrDirectory;
 
+function disableUI(argument) {
+	dateProcessingSelect.disabled = argument;
+	retainDescriptionsInputCheckbox.disabled = argument;
+	retainPatientCharacteristicsInputCheckbox.disabled = argument;
+	retainUidsInputCheckbox.disabled = argument;
+	saveProcessedFilesAsZipButton.disabled = argument;
+}
+
 function hashCode(string) {
 	const utf8 = new TextEncoder().encode(string);
 	return crypto.subtle.digest('SHA-256', utf8).then((hashBuffer) => {
@@ -34,6 +42,7 @@ function hashCode(string) {
 }
 
 function oninputFilesOrDirectory() {
+	disableUI(true);
 	fileArray = event.currentTarget.files;
 	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
 	filesNum = fileArray.length;
@@ -48,6 +57,7 @@ function oninputFilesOrDirectory() {
 			fileReaderArray[i] = fileReader.result;
 		};
 	}
+	disableUI(false);
 }
 
 function saveData(data, fileName) {
@@ -74,6 +84,7 @@ loadSessionInputFile.oninput = function() {
 };
 
 saveProcessedFilesAsZipButton.onclick = function() {
+	disableUI(true);
 	const zip = new JSZip();
 	let dateString = '';
 	if (navigator.userAgent === 'puppeteer') {
@@ -181,8 +192,11 @@ saveProcessedFilesAsZipButton.onclick = function() {
 				zip.generateAsync({type:'arraybuffer'})
 					.then(function (arraybuffer) {
 						saveData([arraybuffer], 'de-identified-files.zip');
+						disableUI(false);
 					});
 			}
 		});
 	}
 };
+
+disableUI(true);
