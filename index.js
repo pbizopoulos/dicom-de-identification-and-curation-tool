@@ -186,7 +186,7 @@ function waitFile(fileName) {
 	let dicomFileNameArray = fs.readdirSync('bin/generated-data').filter(fn => fn.endsWith('.dcm')).filter(fn => fn.startsWith('file-name'));
 	let dicomFilePathArray = dicomFileNameArray.map(file => `bin/generated-data/${file}`);
 	inputUploadHandle.uploadFile(...dicomFilePathArray);
-	await page.focus('#patient-id-prefix-input-text');
+	await page.focus('#patient-pseudo-id-prefix-input-text');
 	await page.keyboard.type('001-');
 	if (fs.existsSync('bin/de-identified-files.zip')) {
 		await fs.unlinkSync('bin/de-identified-files.zip');
@@ -195,11 +195,11 @@ function waitFile(fileName) {
 	waitFile('bin/de-identified-files.zip');
 	const zipFileBuffer = new fs.readFileSync('bin/de-identified-files.zip');
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
-	assert.strictEqual(zipFileHash, 'd17f5f14c8aba4d20137d434bf342ca1e8096117a7c1069a955d92f1e3ae331f');
+	assert.strictEqual(zipFileHash, 'b202fa3f43e95e8555c13be4b41761ffc21dfe5fb63929aa466cd068a386fae8');
 	await page.screenshot({path: 'bin/puppeteer-screenshot.png'});
 	const screenshotBuffer = new fs.readFileSync('bin/puppeteer-screenshot.png');
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
-	assert.strictEqual(screenshotHash, '5f0fe731716e69d6190917af358127819f50a37c814dfa4da4a2de27e6579ae8');
+	assert.strictEqual(screenshotHash, 'f375d71d1796643a0c0c3a557e40ea839564da8a86de5eca950d6d2f64dcd168');
 	await page.close();
 	await browser.close();
 })();

@@ -36,8 +36,8 @@
 			<input id="load-directory-input-file" name="load-directory-input-file" type="file" webkitdirectory directory multiple>
 		</div>
 		<div>
-			<label for="load-patient-ids-input-file">Load patient IDs:</label>
-			<input accept=".json" id="load-patient-ids-input-file" name="load-patient-ids-input-file" type="file">
+			<label for="load-session-input-file">Load session file:</label>
+			<input accept=".json" id="load-session-input-file" name="load-session-input-file" type="file">
 		</div>
 		<div>
 			<b>De-identification options</b>
@@ -51,8 +51,12 @@
 			<input id="retain-patient-characteristics-input-checkbox" name="retain-patient-characteristics-input-checkbox" type="checkbox" checked>
 		</div>
 		<div>
-			<label for="retain-dates-input-checkbox">Retain Dates:</label>
-			<input id="retain-dates-input-checkbox" name="retain-dates-input-checkbox" type="checkbox" checked>
+			<label for="date-processing-select">Date processing:</label>
+			<select id="date-processing-select" name="date-processing-select">
+				<option value="offset">offset</option>
+				<option value="keep">keep</option>
+				<option value="remove">remove</option>
+			</select>
 		</div>
 		<div>
 			<label for="retain-descriptions-input-checkbox">Retain Descriptions:</label>
@@ -62,8 +66,8 @@
 			<b>Curation options</b>
 		</div>
 		<div>
-			<label for="patient-id-prefix-input-text">Patient ID prefix:</label>
-			<input id="patient-id-prefix-input-text" name="patient-id-prefix-input-text" placeholder="e.g. an organization ID" type="text">
+			<label for="patient-pseudo-id-prefix-input-text">Patient pseudo-ID prefix:</label>
+			<input id="patient-pseudo-id-prefix-input-text" name="patient-pseudo-id-prefix-input-text" placeholder="e.g. an organization ID" type="text">
 		</div>
 		<div>
 			<label for="dicom-tag-save-path-input-text">Save path:</label>

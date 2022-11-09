@@ -25,7 +25,7 @@ const puppeteer = require('puppeteer');
 				outputArray[i][12] = 'K';
 			}
 			outputArray[i][4] = 'X';
-			outputObject[dicomTag] = [outputArray[i][4], outputArray[i][6], outputArray[i][9], outputArray[i][10], outputArray[i][12]];
+			outputObject[dicomTag] = [outputArray[i][4], outputArray[i][6], outputArray[i][9], outputArray[i][11], outputArray[i][12]];
 		}
 		outputObject['00100010'][0] = 'Z';
 		outputObject['00100020'][0] = 'Z';
@@ -34,8 +34,10 @@ const puppeteer = require('puppeteer');
 	fs.writeFileSync('dist/nema-modified-table.js', `const nemaModifiedTableString = '${JSON.stringify(nemaModifiedTableObject)}';`);
 	let nemaModifiedTableDefaultCsv = 'Tag,Action\n';
 	for (const property in nemaModifiedTableObject) {
-		if (!(nemaModifiedTableObject[property].includes('K'))) {
-			nemaModifiedTableDefaultCsv += `${property},${nemaModifiedTableObject[property][0]}\n`;
+		if (nemaModifiedTableObject[property].includes('C')) {
+			nemaModifiedTableDefaultCsv += `${property},C\n`;
+		} else if (!(nemaModifiedTableObject[property].includes('K'))) {
+			nemaModifiedTableDefaultCsv += `${property},X\n`;
 		}
 	}
 	fs.writeFileSync('bin/nema-modified-table-default.csv', nemaModifiedTableDefaultCsv);

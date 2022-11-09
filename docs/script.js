@@ -1,15 +1,15 @@
 'use strict';
 
+const dateProcessingSelect = document.getElementById('date-processing-select');
 const dicomTagSavePathInputText = document.getElementById('dicom-tag-save-path-input-text');
 const dicomTagValuesRemovedNumSpan = document.getElementById('dicom-tag-values-removed-num-span');
 const dicomTagValuesReplacedNumSpan = document.getElementById('dicom-tag-values-replaced-num-span');
 const filesProcessedNumSpan = document.getElementById('files-processed-num-span');
 const loadDirectoryInputFile = document.getElementById('load-directory-input-file');
 const loadFilesInputFile = document.getElementById('load-files-input-file');
-const loadPatientIdsInputFile = document.getElementById('load-patient-ids-input-file');
+const loadSessionInputFile = document.getElementById('load-session-input-file');
 const nemaModifiedTableObject = JSON.parse(nemaModifiedTableString);
-const patientIdPrefixInputText = document.getElementById('patient-id-prefix-input-text');
-const retainDatesInputCheckbox = document.getElementById('retain-dates-input-checkbox');
+const patientPseudoIdPrefixInputText = document.getElementById('patient-pseudo-id-prefix-input-text');
 const retainDescriptionsInputCheckbox = document.getElementById('retain-descriptions-input-checkbox');
 const retainPatientCharacteristicsInputCheckbox = document.getElementById('retain-patient-characteristics-input-checkbox');
 const retainUidsInputCheckbox = document.getElementById('retain-uids-input-checkbox');
@@ -18,12 +18,12 @@ let dicomDictArray = [];
 let fileArray = [];
 let fileReaderArray = [];
 let filesNum = 0;
-let patientIdObject = {};
+let sessionObject = {patientIdToPseudoId: {}};
 loadDirectoryInputFile.onchange = onloadFilesOrDirectory;
 loadFilesInputFile.onchange = onloadFilesOrDirectory;
 
 function disableUI(argument) {
-	retainDatesInputCheckbox.disabled = argument;
+	dateProcessingSelect.disabled = argument;
 	retainDescriptionsInputCheckbox.disabled = argument;
 	retainPatientCharacteristicsInputCheckbox.disabled = argument;
 	retainUidsInputCheckbox.disabled = argument;
@@ -71,7 +71,7 @@ function saveData(data, fileName) {
 	window.URL.revokeObjectURL(url);
 }
 
-loadPatientIdsInputFile.onchange = function() {
+loadSessionInputFile.onchange = function() {
 	const file = event.currentTarget.files[0];
 	if (file.length === 0) {
 		return;
@@ -79,11 +79,25 @@ loadPatientIdsInputFile.onchange = function() {
 	const fileReader = new FileReader();
 	fileReader.readAsText(file);
 	fileReader.onload = function (e) {
-		patientIdObject = JSON.parse(e.target.result);
+		sessionObject = JSON.parse(e.target.result);
 	};
 };
 
 saveProcessedFilesAsZipButton.onclick = function() {
+	if (!('daysOffset' in sessionObject)) {
+		if (navigator.userAgent === 'puppeteer') {
+			sessionObject.daysOffset = 0;
+		} else {
+			sessionObject.daysOffset = Math.floor(Math.random() * 3650 * 2) - 3650;
+		}
+	}
+	if (!('secondsOffset' in sessionObject)) {
+		if (navigator.userAgent === 'puppeteer') {
+			sessionObject.secondsOffset = 0;
+		} else {
+			sessionObject.secondsOffset = Math.floor(Math.random() * 3600 * 24);
+		}
+	}
 	disableUI(true);
 	const zip = new JSZip();
 	let dateString = '';
@@ -103,8 +117,37 @@ saveProcessedFilesAsZipButton.onclick = function() {
 				continue;
 			} else if (nemaModifiedTableObject[property][2] === 'K' && retainPatientCharacteristicsInputCheckbox.checked) {
 				continue;
-			} else if (nemaModifiedTableObject[property][3] === 'K' && retainDatesInputCheckbox.checked) {
-				continue;
+			} else if (nemaModifiedTableObject[property][3] === 'C') {
+				if (dateProcessingSelect.value === 'keep') {
+					continue;
+				} else if (dateProcessingSelect.value === 'offset') {
+					if (property in dicomDictArray[i].dict) {
+						if (dicomDictArray[i].dict[property].vr === 'DA') {
+							const year = parseInt(dicomDictArray[i].dict[property].Value[0].slice(0, 4));
+							const month = parseInt(dicomDictArray[i].dict[property].Value[0].slice(4, 6)) - 1;
+							const day = parseInt(dicomDictArray[i].dict[property].Value[0].slice(6, 8));
+							const dateWithOffset = new Date(new Date(year, month, day).getTime() + sessionObject.daysOffset * 24 * 3600 * 1000);
+							const yearWithOffset = dateWithOffset.getFullYear();
+							const monthWithOffset = (dateWithOffset.getMonth() - 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+							const dayWithOffset = (dateWithOffset.getDay()).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+							dicomDictArray[i].dict[property].Value[0] = `${yearWithOffset}${monthWithOffset}${dayWithOffset}`;
+						} else if (dicomDictArray[i].dict[property].vr === 'TM') {
+							const hours = dicomDictArray[i].dict[property].Value[0].slice(0, 2);
+							const minutes = dicomDictArray[i].dict[property].Value[0].slice(2, 4);
+							const seconds = dicomDictArray[i].dict[property].Value[0].slice(4, 6);
+							const hoursMinutesSecondsDate = new Date();
+							hoursMinutesSecondsDate.setHours(hours);
+							hoursMinutesSecondsDate.setMinutes(minutes);
+							hoursMinutesSecondsDate.setSeconds(seconds + sessionObject.secondsOffset);
+							const hoursWithOffset = (hoursMinutesSecondsDate.getHours()).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+							const minutesWithOffset = (hoursMinutesSecondsDate.getMinutes()).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+							const secondsWithOffset = (hoursMinutesSecondsDate.getSeconds()).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+							dicomDictArray[i].dict[property].Value[0] = `${hoursWithOffset}${minutesWithOffset}${secondsWithOffset}`;
+							dicomTagValuesReplacedNum++;
+						}
+					}
+					continue;
+				}
 			} else if (nemaModifiedTableObject[property][4] === 'K' && retainDescriptionsInputCheckbox.checked) {
 				continue;
 			} else if (property === '00100010') {
@@ -112,11 +155,11 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			} else if (property === '00100020') {
 				if (property in dicomDictArray[i].dict) {
 					const patientId = dicomDictArray[i].dict[property].Value[0];
-					if (!(patientId in patientIdObject)) {
-						const idNew = Object.keys(patientIdObject).length.toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping: false});
-						patientIdObject[patientId] = `${patientIdPrefixInputText.value}${idNew}`;
+					if (!(patientId in sessionObject.patientIdToPseudoId)) {
+						const patientPseudoIdBase = Object.keys(sessionObject.patientIdToPseudoId).length.toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping: false});
+						sessionObject.patientIdToPseudoId[patientId] = `${patientPseudoIdPrefixInputText.value}${patientPseudoIdBase}`;
 					}
-					dicomDictArray[i].dict[property].Value[0] = patientIdObject[patientId];
+					dicomDictArray[i].dict[property].Value[0] = sessionObject.patientIdToPseudoId[patientId];
 					dicomTagValuesReplacedNum++;
 				}
 			} else {
@@ -147,7 +190,7 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			if (i === filesNum - 1) {
 				dicomTagValuesRemovedNumSpan.textContent = dicomTagValuesRemovedNum;
 				dicomTagValuesReplacedNumSpan.textContent = dicomTagValuesReplacedNum;
-				zip.file('patient-ids.json', JSON.stringify(patientIdObject), {date: date});
+				zip.file('session.json', JSON.stringify(sessionObject), {date: date});
 				zip.generateAsync({type:'arraybuffer'})
 					.then(function (arraybuffer) {
 						saveData([arraybuffer], 'de-identified-files.zip');
