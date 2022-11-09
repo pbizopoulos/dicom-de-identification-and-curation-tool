@@ -22,14 +22,6 @@ let sessionObject = {};
 loadDirectoryInputFile.onchange = onloadFilesOrDirectory;
 loadFilesInputFile.onchange = onloadFilesOrDirectory;
 
-function disableUI(argument) {
-	dateProcessingSelect.disabled = argument;
-	retainDescriptionsInputCheckbox.disabled = argument;
-	retainPatientCharacteristicsInputCheckbox.disabled = argument;
-	retainUidsInputCheckbox.disabled = argument;
-	saveProcessedFilesAsZipButton.disabled = argument;
-}
-
 function hashCode(string) {
 	const utf8 = new TextEncoder().encode(string);
 	return crypto.subtle.digest('SHA-256', utf8).then((hashBuffer) => {
@@ -42,7 +34,6 @@ function hashCode(string) {
 }
 
 function onloadFilesOrDirectory() {
-	disableUI(true);
 	fileArray = event.currentTarget.files;
 	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
 	filesNum = fileArray.length;
@@ -57,7 +48,6 @@ function onloadFilesOrDirectory() {
 			fileReaderArray[i] = fileReader.result;
 		};
 	}
-	disableUI(false);
 }
 
 function saveData(data, fileName) {
@@ -84,7 +74,6 @@ loadSessionInputFile.onchange = function() {
 };
 
 saveProcessedFilesAsZipButton.onclick = function() {
-	disableUI(true);
 	const zip = new JSZip();
 	let dateString = '';
 	if (navigator.userAgent === 'puppeteer') {
@@ -167,7 +156,7 @@ saveProcessedFilesAsZipButton.onclick = function() {
 					dicomDictArray[i].dict[property].Value = [];
 				} else {
 					for (let dicomTagUpperLevel in dicomDictArray[i].dict) {
-						if (dicomDictArray[i].dict[dicomTagUpperLevel].vr === 'SQ' && property in dicomDictArray[i].dict[dicomTagUpperLevel].Value[0]) {
+						if (dicomDictArray[i].dict[dicomTagUpperLevel].vr === 'SQ' && dicomDictArray[i].dict[dicomTagUpperLevel].Value[0] && property in dicomDictArray[i].dict[dicomTagUpperLevel].Value[0]) {
 							dicomDictArray[i].dict[dicomTagUpperLevel].Value[0][property].Value = [];
 							break;
 						}
@@ -192,11 +181,8 @@ saveProcessedFilesAsZipButton.onclick = function() {
 				zip.generateAsync({type:'arraybuffer'})
 					.then(function (arraybuffer) {
 						saveData([arraybuffer], 'de-identified-files.zip');
-						disableUI(false);
 					});
 			}
 		});
 	}
 };
-
-disableUI(true);
