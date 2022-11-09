@@ -18,7 +18,7 @@ let dicomDictArray = [];
 let fileArray = [];
 let fileReaderArray = [];
 let filesNum = 0;
-let sessionObject = {patientIdToPseudoId: {}};
+let sessionObject = {};
 loadDirectoryInputFile.onchange = onloadFilesOrDirectory;
 loadFilesInputFile.onchange = onloadFilesOrDirectory;
 
@@ -84,20 +84,6 @@ loadSessionInputFile.onchange = function() {
 };
 
 saveProcessedFilesAsZipButton.onclick = function() {
-	if (!('daysOffset' in sessionObject)) {
-		if (navigator.userAgent === 'puppeteer') {
-			sessionObject.daysOffset = 0;
-		} else {
-			sessionObject.daysOffset = Math.floor(Math.random() * 3650 * 2) - 3650;
-		}
-	}
-	if (!('secondsOffset' in sessionObject)) {
-		if (navigator.userAgent === 'puppeteer') {
-			sessionObject.secondsOffset = 0;
-		} else {
-			sessionObject.secondsOffset = Math.floor(Math.random() * 3600 * 24);
-		}
-	}
 	disableUI(true);
 	const zip = new JSZip();
 	let dateString = '';
@@ -110,10 +96,36 @@ saveProcessedFilesAsZipButton.onclick = function() {
 	const date = new Date(dateString);
 	let dicomTagValuesRemovedNum = 0;
 	let dicomTagValuesReplacedNum = 0;
+	const dicomTagPatientId = '00100020';
+	const dicomTagPatientName = '00100010';
 	for (let i = 0; i < filesNum; i++) {
 		dicomDictArray[i] = dcmjs.data.DicomMessage.readFile(fileReaderArray[i]);
+		let patientId;
+		if (dicomTagPatientId in dicomDictArray[i].dict) {
+			patientId = dicomDictArray[i].dict[dicomTagPatientId].Value[0];
+			if (!(patientId in sessionObject)) {
+				const patientPseudoIdBase = Object.keys(sessionObject).length.toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping: false});
+				let daysOffset = Math.floor(Math.random() * 365 * 10 * 2) - 365 * 10;
+				if (navigator.userAgent === 'puppeteer') {
+					daysOffset = 0;
+				}
+				let secondsOffset = Math.floor(Math.random() * 60 * 60 * 24);
+				if (navigator.userAgent === 'puppeteer') {
+					secondsOffset = 0;
+				}
+				sessionObject[patientId] = {patientPseudoId: `${patientPseudoIdPrefixInputText.value}${patientPseudoIdBase}`, daysOffset: daysOffset, secondsOffset: secondsOffset};
+			}
+			dicomDictArray[i].dict[dicomTagPatientId].Value[0] = sessionObject[patientId].patientPseudoId;
+			dicomTagValuesReplacedNum++;
+			dicomDictArray[i].dict[dicomTagPatientName].Value[0] = dicomDictArray[i].dict[dicomTagPatientId].Value[0];
+			dicomTagValuesReplacedNum++;
+		}
 		for (const property in nemaModifiedTableObject) {
-			if (nemaModifiedTableObject[property][1] === 'K' && retainUidsInputCheckbox.checked) {
+			if (property === dicomTagPatientId) {
+				continue;
+			} else if (property === dicomTagPatientName) {
+				continue;
+			} else if (nemaModifiedTableObject[property][1] === 'K' && retainUidsInputCheckbox.checked) {
 				continue;
 			} else if (nemaModifiedTableObject[property][2] === 'K' && retainPatientCharacteristicsInputCheckbox.checked) {
 				continue;
@@ -126,7 +138,7 @@ saveProcessedFilesAsZipButton.onclick = function() {
 							const year = parseInt(dicomDictArray[i].dict[property].Value[0].slice(0, 4));
 							const month = parseInt(dicomDictArray[i].dict[property].Value[0].slice(4, 6)) - 1;
 							const day = parseInt(dicomDictArray[i].dict[property].Value[0].slice(6, 8));
-							const dateWithOffset = new Date(new Date(year, month, day).getTime() + sessionObject.daysOffset * 24 * 3600 * 1000);
+							const dateWithOffset = new Date(new Date(year, month, day).getTime() + sessionObject[patientId].daysOffset * 24 * 60 * 60 * 1000);
 							const yearWithOffset = dateWithOffset.getFullYear();
 							const monthWithOffset = (dateWithOffset.getMonth() - 1).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
 							const dayWithOffset = (dateWithOffset.getDay()).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
@@ -138,7 +150,7 @@ saveProcessedFilesAsZipButton.onclick = function() {
 							const hoursMinutesSecondsDate = new Date();
 							hoursMinutesSecondsDate.setHours(hours);
 							hoursMinutesSecondsDate.setMinutes(minutes);
-							hoursMinutesSecondsDate.setSeconds(seconds + sessionObject.secondsOffset);
+							hoursMinutesSecondsDate.setSeconds(seconds + sessionObject[patientId].secondsOffset);
 							const hoursWithOffset = (hoursMinutesSecondsDate.getHours()).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
 							const minutesWithOffset = (hoursMinutesSecondsDate.getMinutes()).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
 							const secondsWithOffset = (hoursMinutesSecondsDate.getSeconds()).toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
@@ -150,18 +162,6 @@ saveProcessedFilesAsZipButton.onclick = function() {
 				}
 			} else if (nemaModifiedTableObject[property][4] === 'K' && retainDescriptionsInputCheckbox.checked) {
 				continue;
-			} else if (property === '00100010') {
-				continue;
-			} else if (property === '00100020') {
-				if (property in dicomDictArray[i].dict) {
-					const patientId = dicomDictArray[i].dict[property].Value[0];
-					if (!(patientId in sessionObject.patientIdToPseudoId)) {
-						const patientPseudoIdBase = Object.keys(sessionObject.patientIdToPseudoId).length.toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping: false});
-						sessionObject.patientIdToPseudoId[patientId] = `${patientPseudoIdPrefixInputText.value}${patientPseudoIdBase}`;
-					}
-					dicomDictArray[i].dict[property].Value[0] = sessionObject.patientIdToPseudoId[patientId];
-					dicomTagValuesReplacedNum++;
-				}
 			} else {
 				if (property in dicomDictArray[i].dict) {
 					dicomDictArray[i].dict[property].Value = [];
@@ -175,8 +175,6 @@ saveProcessedFilesAsZipButton.onclick = function() {
 				}
 				dicomTagValuesRemovedNum++;
 			}
-			dicomDictArray[i].dict['00100010'].Value[0] = dicomDictArray[i].dict['00100020'].Value[0];
-			dicomTagValuesReplacedNum++;
 		}
 		hashCode(JSON.stringify(dicomDictArray[i])).then((hex) => {
 			const dicomTagSavePathArray = dicomTagSavePathInputText.value.slice(0, -1).split('/');

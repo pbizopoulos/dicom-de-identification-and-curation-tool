@@ -195,11 +195,11 @@ function waitFile(fileName) {
 	waitFile('bin/de-identified-files.zip');
 	const zipFileBuffer = new fs.readFileSync('bin/de-identified-files.zip');
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
-	assert.strictEqual(zipFileHash, 'b202fa3f43e95e8555c13be4b41761ffc21dfe5fb63929aa466cd068a386fae8');
+	assert.strictEqual(zipFileHash, 'd38a8d65073a190ebba5e69263e15a2f0bdc92d083bd3e97d2f30c34bea43d4f');
 	await page.screenshot({path: 'bin/puppeteer-screenshot.png'});
 	const screenshotBuffer = new fs.readFileSync('bin/puppeteer-screenshot.png');
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
-	assert.strictEqual(screenshotHash, 'f375d71d1796643a0c0c3a557e40ea839564da8a86de5eca950d6d2f64dcd168');
+	assert.strictEqual(screenshotHash, '4aedfee2372e1f5b6ee8da2f3cdba5e84761b30095b5589e491abfdd6daf249e');
 	await page.close();
 	await browser.close();
 })();
