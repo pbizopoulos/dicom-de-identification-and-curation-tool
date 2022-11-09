@@ -200,3 +200,6 @@ saveProcessedFilesAsZipButton.onclick = function() {
 };
 
 disableUI(true);
+window.onload = function() {
+	document.body.style.display = '';
+};
