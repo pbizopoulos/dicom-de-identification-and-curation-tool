@@ -19,8 +19,8 @@ let fileArray = [];
 let fileReaderArray = [];
 let filesNum = 0;
 let sessionObject = {};
-loadDirectoryInputFile.onchange = onloadFilesOrDirectory;
-loadFilesInputFile.onchange = onloadFilesOrDirectory;
+loadDirectoryInputFile.oninput = oninputFilesOrDirectory;
+loadFilesInputFile.oninput = oninputFilesOrDirectory;
 
 function hashCode(string) {
 	const utf8 = new TextEncoder().encode(string);
@@ -33,7 +33,7 @@ function hashCode(string) {
 	});
 }
 
-function onloadFilesOrDirectory() {
+function oninputFilesOrDirectory() {
 	fileArray = event.currentTarget.files;
 	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
 	filesNum = fileArray.length;
@@ -61,7 +61,7 @@ function saveData(data, fileName) {
 	window.URL.revokeObjectURL(url);
 }
 
-loadSessionInputFile.onchange = function() {
+loadSessionInputFile.oninput = function() {
 	const file = event.currentTarget.files[0];
 	if (file.length === 0) {
 		return;
