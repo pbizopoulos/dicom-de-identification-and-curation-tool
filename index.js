@@ -1,5 +1,4 @@
 'use strict';
-
 const assert = require('assert');
 const crypto = require('crypto');
 const dcmjs = require('dcmjs');
@@ -12,7 +11,6 @@ function waitFile(fileName) {
 		continue;
 	}
 }
-
 (async () => {
 	const jsonDataset = `{
 		"AccessionNumber": "",
@@ -140,14 +138,18 @@ function waitFile(fileName) {
 				"PixelData": "OW"
 			}
 	}`;
-
-	const browser = await puppeteer.launch({args: ['--user-agent=puppeteer']});
+	const browser = await puppeteer.launch({
+		args: ['--user-agent=puppeteer']
+	});
 	const page = await browser.newPage();
 	page.on('pageerror', pageerr => {
 		assert.fail(pageerr);
 	});
-	await page._client().send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: path.resolve('bin')});
-	if (!fs.existsSync('bin/generated-data')){
+	await page._client().send('Page.setDownloadBehavior', {
+		behavior: 'allow',
+		downloadPath: path.resolve('bin')
+	});
+	if (!fs.existsSync('bin/generated-data')) {
 		fs.mkdirSync('bin/generated-data');
 	}
 	for (let i = 0; i < 1000; i++) {
@@ -155,7 +157,7 @@ function waitFile(fileName) {
 		if (i % 7 != 0) {
 			const newPath = `file-path-${i % 7}`;
 			inputDicomFileName = `${newPath}/${inputDicomFileName}`;
-			if (!fs.existsSync(`bin/generated-data/${newPath}`)){
+			if (!fs.existsSync(`bin/generated-data/${newPath}`)) {
 				fs.mkdirSync(`bin/generated-data/${newPath}`);
 			}
 		}
@@ -196,10 +198,12 @@ function waitFile(fileName) {
 	const zipFileBuffer = new fs.readFileSync('bin/de-identified-files.zip');
 	const zipFileHash = crypto.createHash('sha256').update(zipFileBuffer).digest('hex');
 	assert.strictEqual(zipFileHash, 'd38a8d65073a190ebba5e69263e15a2f0bdc92d083bd3e97d2f30c34bea43d4f');
-	await page.screenshot({path: 'bin/puppeteer-screenshot.png'});
+	await page.screenshot({
+		path: 'bin/puppeteer-screenshot.png'
+	});
 	const screenshotBuffer = new fs.readFileSync('bin/puppeteer-screenshot.png');
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
-	assert.strictEqual(screenshotHash, '422916c59e67b441529cd6cbd5649524f51fa21c33bfbd216db5bc6e86a58f57');
+	assert.strictEqual(screenshotHash, '4a0b14fb713fc1ca4565ad178d1414b4771ec9c40612f3801a10ddd0cf0698b0');
 	await page.close();
 	await browser.close();
 })();
