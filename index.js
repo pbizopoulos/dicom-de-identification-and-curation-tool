@@ -203,7 +203,7 @@ function waitFile(fileName) {
 	});
 	const screenshotBuffer = new fs.readFileSync('bin/puppeteer-screenshot.png');
 	const screenshotHash = crypto.createHash('sha256').update(screenshotBuffer).digest('hex');
-	assert.strictEqual(screenshotHash, '4a0b14fb713fc1ca4565ad178d1414b4771ec9c40612f3801a10ddd0cf0698b0');
+	assert.strictEqual(screenshotHash, '07ebb5f84b8d7d320e85a551472dde26a84fedc9cf4e8969d63c4c33fc9b3886');
 	await page.close();
 	await browser.close();
 })();
