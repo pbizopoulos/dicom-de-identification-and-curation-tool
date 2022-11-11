@@ -12,5 +12,5 @@ cd dicom-de-identification-and-curation-tool/
 
 # Usage
 make help			# Show help for node.
-make -C docs/node/ help		# Show help for node.
-make -C docs/ help		# Show help for browser.
+cd docs/node/ && make help	# Show help for node.
+cd docs/ && make help		# Show help for browser.

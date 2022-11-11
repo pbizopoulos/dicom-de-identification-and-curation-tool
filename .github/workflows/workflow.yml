@@ -12,9 +12,11 @@ jobs:
           make
       - name: Check code and build binaries for node.
         run: |
-          make -C docs/node/ check
-          make -C docs/node/
+          cd docs/node/
+          make check
+          make
       - name: Check code and build binaries for browser.
         run: |
-          make -C docs/ check
-          make -C docs/
+          cd docs/
+          make check
+          make

@@ -23,6 +23,7 @@ loadFilesInputFile.oninput = oninputFilesOrDirectory;
 
 function disableUI(argument) {
 	dateProcessingSelect.disabled = argument;
+	patientPseudoIdPrefixInputText.disabled = argument;
 	retainDescriptionsInputCheckbox.disabled = argument;
 	retainPatientCharacteristicsInputCheckbox.disabled = argument;
 	retainUidsInputCheckbox.disabled = argument;
