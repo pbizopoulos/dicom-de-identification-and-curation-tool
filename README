@@ -6,11 +6,8 @@ POSIX mandatory utilities
 Make
 Docker
  
-# Preparation
+# Build
 git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation-tool
 cd dicom-de-identification-and-curation-tool/
-
-# Usage
-make help			# Show help for node.
-cd docs/node/ && make help	# Show help for node.
-cd docs/ && make help		# Show help for browser.
+cd docs/node/ && make DEBUG=0 && cd .. && make DEBUG=0 && cd ..
+make DEBUG=0			# Test build.
