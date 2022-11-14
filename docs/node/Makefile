@@ -50,7 +50,7 @@ bin/check: $(js_file_name) .dockerignore .gitignore bin bin/eslintrc.js
 		--user $$(id -u):$$(id -g) \
 		--volume $$(pwd):$(work_dir)/ \
 		--workdir $(work_dir)/ \
-		node npx --yes eslint --fix --config bin/eslintrc.js $(js_file_name)
+		node npx --yes eslint --config bin/eslintrc.js --fix $(js_file_name)
 	docker container run \
 		$(debug_args) \
 		--env HOME=$(work_dir)/bin \
@@ -58,7 +58,7 @@ bin/check: $(js_file_name) .dockerignore .gitignore bin bin/eslintrc.js
 		--user $$(id -u):$$(id -g) \
 		--volume $$(pwd):$(work_dir)/ \
 		--workdir $(work_dir)/ \
-		node npx --yes js-beautify --end-with-newline --indent-with-tabs --no-preserve-newlines --type js --replace $(js_file_name)
+		node npx --yes js-beautify --end-with-newline --indent-with-tabs --no-preserve-newlines --replace --type js $(js_file_name)
 	touch bin/check
 
 bin/eslintrc.js: bin
