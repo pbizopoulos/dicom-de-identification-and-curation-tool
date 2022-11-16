@@ -18,8 +18,8 @@ let fileArray = [];
 let fileReaderArray = [];
 let filesNum = 0;
 let sessionObject = {};
-loadDirectoryInputFile.onchange = oninputFilesOrDirectory;
-loadFilesInputFile.onchange = oninputFilesOrDirectory;
+loadDirectoryInputFile.oninput = oninputFilesOrDirectory;
+loadFilesInputFile.oninput = oninputFilesOrDirectory;
 
 function disableUI(argument) {
 	dateProcessingSelect.disabled = argument;
@@ -68,7 +68,7 @@ function saveData(data, fileName) {
 	a.click();
 	window.URL.revokeObjectURL(url);
 }
-loadSessionInputFile.onchange = function() {
+loadSessionInputFile.oninput = function() {
 	const file = event.currentTarget.files[0];
 	if (file.length === 0) {
 		return;
