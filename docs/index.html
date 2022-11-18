@@ -19,11 +19,11 @@
 		<h3>Input</h3>
 		<div>
 			<label for="load-files-input-file">Load files:</label>
-			<input id="load-files-input-file" name="load-files-input-file" type="file" multiple>
+			<input id="load-files-input-file" oninput="oninputFilesOrDirectory();" name="load-files-input-file" type="file" multiple>
 		</div>
 		<div>
 			<label for="load-directory-input-file">Load directory:</label>
-			<input id="load-directory-input-file" name="load-directory-input-file" type="file" webkitdirectory directory multiple>
+			<input id="load-directory-input-file" oninput="oninputFilesOrDirectory();" name="load-directory-input-file" type="file" webkitdirectory directory multiple>
 		</div>
 		<div>
 			<label for="load-session-input-file">Load session file:</label>
@@ -62,7 +62,7 @@
 		<h3>Output</h3>
 		<div>
 			<label></label>
-			<button id="save-processed-files-as-zip-button" type="submit">Save processed files as zip</button>
+			<button id="save-processed-files-as-zip-button" onclick="saveProcessedFilesAsZipButton();" type="submit">Save processed files as zip</button>
 		</div>
 		<div>
 			<label>Files processed:</label>

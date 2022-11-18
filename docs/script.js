@@ -18,8 +18,6 @@ let fileArray = [];
 let fileReaderArray = [];
 let filesNum = 0;
 let sessionObject = {};
-loadDirectoryInputFile.oninput = oninputFilesOrDirectory;
-loadFilesInputFile.oninput = oninputFilesOrDirectory;
 
 function disableUI(argument) {
 	dateProcessingSelect.disabled = argument;
