@@ -39,7 +39,7 @@ function hashCode(string) {
 function oninputFilesOrDirectory() {
 	// disableUI(true);
 	fileArray = loadDirectoryInputFile.files;
-	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
+	// fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
 	filesNum = fileArray.length;
 	if (filesNum === 0) {
 		return;
@@ -79,7 +79,7 @@ loadSessionInputFile.oninput = function() {
 saveProcessedFilesAsZipButton.onclick = function() {
 	// disableUI(true);
 	fileArray = loadDirectoryInputFile.files;
-	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
+	// fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
 	filesNum = fileArray.length;
 	const zip = new JSZip();
 	let dateString = '';
