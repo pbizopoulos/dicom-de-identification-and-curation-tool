@@ -40,7 +40,7 @@ function hashCode(string) {
 }
 
 function oninputFilesOrDirectory() {
-	disableUI(true);
+	// disableUI(true);
 	fileArray = event.currentTarget.files;
 	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
 	filesNum = fileArray.length;
@@ -55,7 +55,7 @@ function oninputFilesOrDirectory() {
 			fileReaderArray[i] = fileReader.result;
 		};
 	}
-	disableUI(false);
+	// disableUI(false);
 }
 
 function saveData(data, fileName) {
@@ -80,7 +80,7 @@ loadSessionInputFile.oninput = function() {
 	};
 };
 saveProcessedFilesAsZipButton.onclick = function() {
-	disableUI(true);
+	// disableUI(true);
 	const zip = new JSZip();
 	let dateString = '';
 	if (navigator.userAgent === 'puppeteer') {
@@ -219,13 +219,13 @@ saveProcessedFilesAsZipButton.onclick = function() {
 					type: 'arraybuffer'
 				}).then(function(arraybuffer) {
 					saveData([arraybuffer], 'de-identified-files.zip');
-					disableUI(false);
+					// disableUI(false);
 				});
 			}
 		});
 	}
 };
-disableUI(true);
+// disableUI(true);
 window.onload = function() {
 	document.body.style.display = '';
 };
