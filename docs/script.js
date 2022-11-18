@@ -5,7 +5,6 @@ const dicomTagValuesRemovedNumSpan = document.getElementById('dicom-tag-values-r
 const dicomTagValuesReplacedNumSpan = document.getElementById('dicom-tag-values-replaced-num-span');
 const filesProcessedNumSpan = document.getElementById('files-processed-num-span');
 const loadDirectoryInputFile = document.getElementById('load-directory-input-file');
-const loadFilesInputFile = document.getElementById('load-files-input-file');
 const loadSessionInputFile = document.getElementById('load-session-input-file');
 const nemaModifiedTableObject = JSON.parse(nemaModifiedTableString);
 const patientPseudoIdPrefixInputText = document.getElementById('patient-pseudo-id-prefix-input-text');
@@ -18,8 +17,6 @@ let fileArray = [];
 let fileReaderArray = [];
 let filesNum = 0;
 let sessionObject = {};
-loadDirectoryInputFile.oninput = oninputFilesOrDirectory;
-loadFilesInputFile.oninput = oninputFilesOrDirectory;
 
 function disableUI(argument) {
 	dateProcessingSelect.disabled = argument;
@@ -41,8 +38,8 @@ function hashCode(string) {
 
 function oninputFilesOrDirectory() {
 	// disableUI(true);
-	fileArray = event.currentTarget.files;
-	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
+	fileArray = loadDirectoryInputFile.files;
+	// fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
 	filesNum = fileArray.length;
 	if (filesNum === 0) {
 		return;
@@ -81,6 +78,9 @@ loadSessionInputFile.oninput = function() {
 };
 saveProcessedFilesAsZipButton.onclick = function() {
 	// disableUI(true);
+	fileArray = loadDirectoryInputFile.files;
+	// fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
+	filesNum = fileArray.length;
 	const zip = new JSZip();
 	let dateString = '';
 	if (navigator.userAgent === 'puppeteer') {
