@@ -78,6 +78,9 @@ loadSessionInputFile.oninput = function() {
 };
 saveProcessedFilesAsZipButton.onclick = function() {
 	// disableUI(true);
+	fileArray = loadDirectoryInputFile.files;
+	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
+	filesNum = fileArray.length;
 	const zip = new JSZip();
 	let dateString = '';
 	if (navigator.userAgent === 'puppeteer') {
