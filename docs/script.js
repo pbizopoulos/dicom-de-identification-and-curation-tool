@@ -5,6 +5,7 @@ const dicomTagValuesRemovedNumSpan = document.getElementById('dicom-tag-values-r
 const dicomTagValuesReplacedNumSpan = document.getElementById('dicom-tag-values-replaced-num-span');
 const filesProcessedNumSpan = document.getElementById('files-processed-num-span');
 const loadDirectoryInputFile = document.getElementById('load-directory-input-file');
+const loadFilesInputFile = document.getElementById('load-files-input-file');
 const loadSessionInputFile = document.getElementById('load-session-input-file');
 const nemaModifiedTableObject = JSON.parse(nemaModifiedTableString);
 const patientPseudoIdPrefixInputText = document.getElementById('patient-pseudo-id-prefix-input-text');
@@ -17,6 +18,8 @@ let fileArray = [];
 let fileReaderArray = [];
 let filesNum = 0;
 let sessionObject = {};
+loadDirectoryInputFile.oninput = oninputFilesOrDirectory;
+loadFilesInputFile.oninput = oninputFilesOrDirectory;
 
 function disableUI(argument) {
 	dateProcessingSelect.disabled = argument;
@@ -37,9 +40,9 @@ function hashCode(string) {
 }
 
 function oninputFilesOrDirectory() {
-	// disableUI(true);
-	fileArray = loadDirectoryInputFile.files;
-	// fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
+	disableUI(true);
+	fileArray = event.currentTarget.files;
+	fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
 	filesNum = fileArray.length;
 	if (filesNum === 0) {
 		return;
@@ -52,7 +55,7 @@ function oninputFilesOrDirectory() {
 			fileReaderArray[i] = fileReader.result;
 		};
 	}
-	// disableUI(false);
+	disableUI(false);
 }
 
 function saveData(data, fileName) {
@@ -77,10 +80,7 @@ loadSessionInputFile.oninput = function() {
 	};
 };
 saveProcessedFilesAsZipButton.onclick = function() {
-	// disableUI(true);
-	fileArray = loadDirectoryInputFile.files;
-	// fileArray = [...fileArray].filter(file => file.type === 'application/dicom');
-	filesNum = fileArray.length;
+	disableUI(true);
 	const zip = new JSZip();
 	let dateString = '';
 	if (navigator.userAgent === 'puppeteer') {
@@ -219,13 +219,13 @@ saveProcessedFilesAsZipButton.onclick = function() {
 					type: 'arraybuffer'
 				}).then(function(arraybuffer) {
 					saveData([arraybuffer], 'de-identified-files.zip');
-					// disableUI(false);
+					disableUI(false);
 				});
 			}
 		});
 	}
 };
-// disableUI(true);
+disableUI(true);
 window.onload = function() {
 	document.body.style.display = '';
 };
