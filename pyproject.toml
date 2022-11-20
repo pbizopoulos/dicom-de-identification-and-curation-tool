@@ -1,0 +1,6 @@
+[project]
+name = "UNKNOWN"
+version = "0.0.0"
+dependencies = [
+	"pydicom==2.3.1",
+]
