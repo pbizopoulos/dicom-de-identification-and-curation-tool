@@ -8,7 +8,7 @@ import pydicom
 
 
 def main():
-    dicom = dcmread(pydicom.data.get_testdata_files()[1], force=True)
+    dicom = dcmread(pydicom.data.get_testdata_file('rtdose_1frame.dcm'))
     generated_data_file_path = join('bin', 'generated-data')
     if os.path.exists(generated_data_file_path):
         rmtree(generated_data_file_path)
