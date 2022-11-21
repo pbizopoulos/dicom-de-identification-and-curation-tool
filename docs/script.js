@@ -6,7 +6,6 @@ const dicomTagValuesReplacedNumSpan = document.getElementById('dicom-tag-values-
 const filesProcessedNumSpan = document.getElementById('files-processed-num-span');
 const loadDirectoryInputFile = document.getElementById('load-directory-input-file');
 const loadSessionInputFile = document.getElementById('load-session-input-file');
-const nemaModifiedTableObject = JSON.parse(nemaModifiedTableString);
 const patientPseudoIdPrefixInputText = document.getElementById('patient-pseudo-id-prefix-input-text');
 const retainDescriptionsInputCheckbox = document.getElementById('retain-descriptions-input-checkbox');
 const retainPatientCharacteristicsInputCheckbox = document.getElementById('retain-patient-characteristics-input-checkbox');

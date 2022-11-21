@@ -30,7 +30,7 @@ def main():
         nema_modified_table_dict['00100010'][0] = 'Z'
         nema_modified_table_dict['00100020'][0] = 'Z'
         with open('dist/nema-modified-table.js', 'w') as file:
-            json.dump(nema_modified_table_dict, file)
+            file.write(f'const nemaModifiedTableObject = {json.dumps(nema_modified_table_dict)};')
         with open('bin/nema-modified-table-default.csv', 'w') as file:
             writer = csv.writer(file)
             writer.writerow(['Tag', 'Action'])
