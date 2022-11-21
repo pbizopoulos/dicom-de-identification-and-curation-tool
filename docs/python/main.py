@@ -10,9 +10,6 @@ def main():
         browser = playwright.chromium.launch()
         page = browser.new_page()
         page.on('pageerror', lambda exception: (_ for _ in ()).throw(Exception(f'uncaught exception: {exception}')))
-        timeout = 100000
-        page.set_default_navigation_timeout(timeout)
-        page.set_default_timeout(timeout)
         page.goto('https://dicom.nema.org/medical/dicom/current/output/chtml/part15/chapter_e.html')
         child_list = page.query_selector_all('table')[3].query_selector_all('xpath=child::*')[1].query_selector_all('xpath=child::*')
         dicom_tag_list = [child.query_selector_all('td')[1].inner_text()[1:10].replace(',', '') for child in child_list]

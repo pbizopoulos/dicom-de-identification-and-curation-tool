@@ -33,9 +33,6 @@ def main():
         browser = playwright.chromium.launch(args=['--user-agent=playwright'])
         page = browser.new_page()
         page.on('pageerror', lambda exception: (_ for _ in ()).throw(Exception(f'uncaught exception: {exception}')))
-        timeout = 100000
-        page.set_default_navigation_timeout(timeout)
-        page.set_default_timeout(timeout)
         page.goto('file:///work/docs/index.html')
         only_files_generated_data_file_path = [join(generated_data_file_path, file) for file in os.listdir(generated_data_file_path) if os.path.isfile(os.path.join(generated_data_file_path, file))]
         page.set_input_files('#load-directory-input-file', only_files_generated_data_file_path)
