@@ -15,4 +15,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: my-artifact
-          path: bin/screenshot.png
+          path: bin/de-identified-files.zip
