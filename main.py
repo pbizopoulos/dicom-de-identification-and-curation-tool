@@ -2,7 +2,6 @@ from os.path import join
 from playwright.sync_api import sync_playwright
 from pydicom import dcmread
 from shutil import rmtree
-import hashlib
 import os
 import pydicom
 
