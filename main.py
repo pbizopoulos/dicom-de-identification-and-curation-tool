@@ -2,6 +2,7 @@ from os.path import join
 from playwright.sync_api import sync_playwright
 from pydicom import dcmread
 from shutil import rmtree
+import hashlib
 import os
 import pydicom
 
@@ -34,13 +35,16 @@ def main():
         page.on('pageerror', lambda exception: (_ for _ in ()).throw(Exception(f'uncaught exception: {exception}')))
         page.goto('file:///work/docs/index.html')
         only_files_generated_data_file_path = [join(generated_data_file_path, file) for file in os.listdir(generated_data_file_path) if os.path.isfile(os.path.join(generated_data_file_path, file))]
-        page.set_input_files('#load-directory-input-file', only_files_generated_data_file_path)
-        page.screenshot(path=join('bin', 'screenshot.png'))
+        page.set_input_files('#load-directory-input-file', sorted(only_files_generated_data_file_path))
         with page.expect_download() as download_info:
             page.click('#save-processed-files-as-zip-button')
         download = download_info.value
         download.save_as(join('bin', 'de-identified-files.zip'))
+        with open(join('bin', 'de-identified-files.zip'), 'rb') as file:
+            assert hashlib.sha256(file.read()).hexdigest() == '4825d48640e1ba65985ad2846a8c8e696ef976b9bb5a00d30dfce2902523470e'
         page.screenshot(path=join('bin', 'screenshot.png'))
+        with open(join('bin', 'screenshot.png'), 'rb') as file:
+            assert hashlib.sha256(file.read()).hexdigest() == '50a29aeaaf79f2f9e623de5edf265943d24f920251d5edd3c8ab851e02102203'
         browser.close()
 
 
