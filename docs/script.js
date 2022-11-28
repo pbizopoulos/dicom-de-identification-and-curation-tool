@@ -8,7 +8,9 @@ const loadDirectoryInputFile = document.getElementById('load-directory-input-fil
 const loadSessionInputFile = document.getElementById('load-session-input-file');
 const patientPseudoIdPrefixInputText = document.getElementById('patient-pseudo-id-prefix-input-text');
 const retainDescriptionsInputCheckbox = document.getElementById('retain-descriptions-input-checkbox');
+const retainDeviceIdentityInputCheckbox = document.getElementById('retain-device-identity-input-checkbox');
 const retainPatientCharacteristicsInputCheckbox = document.getElementById('retain-patient-characteristics-input-checkbox');
+const retainSafePrivateInputCheckbox = document.getElementById('retain-safe-private-input-checkbox');
 const retainUidsInputCheckbox = document.getElementById('retain-uids-input-checkbox');
 const saveProcessedFilesAsZipButton = document.getElementById('save-processed-files-as-zip-button');
 let dicomDictArray = [];
@@ -21,7 +23,9 @@ function disableUI(argument) {
 	dateProcessingSelect.disabled = argument;
 	patientPseudoIdPrefixInputText.disabled = argument;
 	retainDescriptionsInputCheckbox.disabled = argument;
+	retainDeviceIdentityInputCheckbox.disabled = argument;
 	retainPatientCharacteristicsInputCheckbox.disabled = argument;
+	retainSafePrivateInputCheckbox.disabled = argument;
 	retainUidsInputCheckbox.disabled = argument;
 	saveProcessedFilesAsZipButton.disabled = argument;
 }
@@ -127,11 +131,15 @@ saveProcessedFilesAsZipButton.onclick = function() {
 				continue;
 			} else if (property === dicomTagPatientName) {
 				continue;
-			} else if (nemaModifiedTableObject[property][1] === 'K' && retainUidsInputCheckbox.checked) {
+			} else if (nemaModifiedTableObject[property][1] === 'K' && retainSafePrivateInputCheckbox.checked) {
 				continue;
-			} else if (nemaModifiedTableObject[property][2] === 'K' && retainPatientCharacteristicsInputCheckbox.checked) {
+			} else if (nemaModifiedTableObject[property][2] === 'K' && retainUidsInputCheckbox.checked) {
 				continue;
-			} else if (nemaModifiedTableObject[property][3] === 'C') {
+			} else if (nemaModifiedTableObject[property][3] === 'K' && retainDeviceIdentityInputCheckbox.checked) {
+				continue;
+			} else if (nemaModifiedTableObject[property][4] === 'K' && retainPatientCharacteristicsInputCheckbox.checked) {
+				continue;
+			} else if (nemaModifiedTableObject[property][5] === 'C') {
 				if (dateProcessingSelect.value === 'keep') {
 					continue;
 				} else if (dateProcessingSelect.value === 'offset') {
@@ -177,7 +185,7 @@ saveProcessedFilesAsZipButton.onclick = function() {
 					}
 					continue;
 				}
-			} else if (nemaModifiedTableObject[property][4] === 'K' && retainDescriptionsInputCheckbox.checked) {
+			} else if (nemaModifiedTableObject[property][6] === 'K' && retainDescriptionsInputCheckbox.checked) {
 				continue;
 			} else {
 				if (property in dicomDictArray[i].dict) {
