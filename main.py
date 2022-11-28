@@ -1,50 +1,49 @@
-from os.path import join
+from os import listdir, makedirs
+from os.path import exists, isfile, join
 from playwright.sync_api import sync_playwright
 from pydicom import dcmread
 from shutil import rmtree
 import hashlib
-import os
 import pydicom
 
 
 def main():
-    dicom = dcmread(pydicom.data.get_testdata_file('rtdose_1frame.dcm'))
+    dicom_data = dcmread(pydicom.data.get_testdata_file('rtdose_1frame.dcm'))
     generated_data_file_path = join('bin', 'generated-data')
-    if os.path.exists(generated_data_file_path):
-        rmtree(generated_data_file_path)
-    os.makedirs(generated_data_file_path, exist_ok=True)
-    for index in range(1000):
-        dicom[16, 16].value = f'John Doe {index % 100}'
-        dicom[16, 32].value = str(index % 100)
-        dicom[32, 17].value = str(index % 5)
-        dicom[8, 24].value = dicom[8, 24].value.replace(str(index % 8), str(index % 9))
-        if index % 3:
-            dicom[8, 96].value = 'CT'
-        elif index % 3 == 1:
-            dicom[8, 96].value = 'MG'
-        elif index % 3 == 2:
-            dicom[8, 96].value = 'MR'
-        if index % 7:
-            os.makedirs(join(generated_data_file_path, f'folder-{index}'), exist_ok=True)
-            dicom.save_as(join(generated_data_file_path, f'folder-{index}', f'{index}.dcm'))
-        else:
-            dicom.save_as(join(generated_data_file_path, f'{index}.dcm'))
+    if not exists(generated_data_file_path):
+        makedirs(generated_data_file_path, exist_ok=True)
+        for index in range(1000):
+            dicom_data[16, 16].value = f'John Doe {index % 100}'
+            dicom_data[16, 32].value = str(index % 100)
+            dicom_data[32, 17].value = str(index % 5)
+            dicom_data[8, 24].value = dicom_data[8, 24].value.replace(str(index % 8), str(index % 9))
+            if index % 3:
+                dicom_data[8, 96].value = 'CT'
+            elif index % 3 == 1:
+                dicom_data[8, 96].value = 'MG'
+            elif index % 3 == 2:
+                dicom_data[8, 96].value = 'MR'
+            if index % 7:
+                makedirs(join(generated_data_file_path, f'folder-{index}'), exist_ok=True)
+                dicom_data.save_as(join(generated_data_file_path, f'folder-{index}', f'{index}.dcm'))
+            else:
+                dicom_data.save_as(join(generated_data_file_path, f'{index}.dcm'))
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(args=['--user-agent=playwright'])
         page = browser.new_page()
         page.on('pageerror', lambda exception: (_ for _ in ()).throw(Exception(f'uncaught exception: {exception}')))
         page.goto('file:///work/docs/index.html')
-        only_files_generated_data_file_path = [join(generated_data_file_path, file) for file in os.listdir(generated_data_file_path) if os.path.isfile(os.path.join(generated_data_file_path, file))]
+        only_files_generated_data_file_path = [join(generated_data_file_path, file) for file in listdir(generated_data_file_path) if isfile(join(generated_data_file_path, file))]
         page.set_input_files('#load-directory-input-file', sorted(only_files_generated_data_file_path))
         with page.expect_download() as download_info:
             page.click('#save-processed-files-as-zip-button')
         download = download_info.value
         download.save_as(join('bin', 'de-identified-files.zip'))
         with open(join('bin', 'de-identified-files.zip'), 'rb') as file:
-            assert hashlib.sha256(file.read()).hexdigest() == '76f7cfb86a806a8b1f086e86b9b9f008959c79aeba344f9211f8ed8963a15bd7'
+            assert hashlib.sha256(file.read()).hexdigest() == '44e64c9a6b748368998af41f9669c4300c92b278f2736cf2a83ddc79a9ed735e'
         page.screenshot(path=join('bin', 'screenshot.png'))
         with open(join('bin', 'screenshot.png'), 'rb') as file:
-            assert hashlib.sha256(file.read()).hexdigest() == 'd2d42c202ebf8b60c126b3571ab8937192e0d0928a66f2a8a2561de93e9aa359'
+            assert hashlib.sha256(file.read()).hexdigest() == 'b4b36f9a496c81ab42fb704d4c57344514bd7e6e23998a45bd47cade634cb01f'
         browser.close()
 
 

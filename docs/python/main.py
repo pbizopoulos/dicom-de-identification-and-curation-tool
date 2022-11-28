@@ -34,7 +34,11 @@ def main():
             writer = csv.writer(file)
             writer.writerow(['Tag', 'Action'])
             for key, value in nema_modified_table_dict.items():
-                if 'C' in nema_modified_table_dict[key]:
+                if key == '00100010':
+                    writer.writerow([key, 'Z'])
+                elif key == '00100020':
+                    writer.writerow([key, 'Z'])
+                elif 'C' in nema_modified_table_dict[key]:
                     writer.writerow([key, 'C'])
                 elif 'K' not in nema_modified_table_dict[key]:
                     writer.writerow([key, 'X'])

@@ -7,7 +7,7 @@ const filesProcessedNumSpan = document.getElementById('files-processed-num-span'
 const loadDirectoryInputFile = document.getElementById('load-directory-input-file');
 const loadSessionInputFile = document.getElementById('load-session-input-file');
 const patientPseudoIdPrefixInputText = document.getElementById('patient-pseudo-id-prefix-input-text');
-const retainDescriptionsInputCheckbox = document.getElementById('retain-descriptions-input-checkbox');
+const retainDescriptorsInputCheckbox = document.getElementById('retain-descriptors-input-checkbox');
 const retainDeviceIdentityInputCheckbox = document.getElementById('retain-device-identity-input-checkbox');
 const retainPatientCharacteristicsInputCheckbox = document.getElementById('retain-patient-characteristics-input-checkbox');
 const retainSafePrivateInputCheckbox = document.getElementById('retain-safe-private-input-checkbox');
@@ -22,7 +22,7 @@ let sessionObject = {};
 function disableUI(argument) {
 	dateProcessingSelect.disabled = argument;
 	patientPseudoIdPrefixInputText.disabled = argument;
-	retainDescriptionsInputCheckbox.disabled = argument;
+	retainDescriptorsInputCheckbox.disabled = argument;
 	retainDeviceIdentityInputCheckbox.disabled = argument;
 	retainPatientCharacteristicsInputCheckbox.disabled = argument;
 	retainSafePrivateInputCheckbox.disabled = argument;
@@ -90,8 +90,8 @@ saveProcessedFilesAsZipButton.onclick = function() {
 	const date = new Date(dateString);
 	let dicomTagValuesRemovedNum = 0;
 	let dicomTagValuesReplacedNum = 0;
-	const dicomTagPatientId = '00100020';
-	const dicomTagPatientName = '00100010';
+	const patientIdDicomTag = '00100020';
+	const patientNameDicomTag = '00100010';
 	for (let i = 0; i < filesNum; i++) {
 		try {
 			dicomDictArray[i] = dcmjs.data.DicomMessage.readFile(fileReaderArray[i]);
@@ -100,8 +100,8 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			continue;
 		}
 		let patientId;
-		if (dicomTagPatientId in dicomDictArray[i].dict) {
-			patientId = dicomDictArray[i].dict[dicomTagPatientId].Value[0];
+		if (patientIdDicomTag in dicomDictArray[i].dict) {
+			patientId = dicomDictArray[i].dict[patientIdDicomTag].Value[0];
 			if (!(patientId in sessionObject)) {
 				const patientPseudoIdBase = Object.keys(sessionObject).length.toLocaleString('en-US', {
 					minimumIntegerDigits: 6,
@@ -121,15 +121,15 @@ saveProcessedFilesAsZipButton.onclick = function() {
 					secondsOffset: secondsOffset
 				};
 			}
-			dicomDictArray[i].dict[dicomTagPatientId].Value[0] = sessionObject[patientId].patientPseudoId;
+			dicomDictArray[i].dict[patientIdDicomTag].Value[0] = sessionObject[patientId].patientPseudoId;
 			dicomTagValuesReplacedNum++;
-			dicomDictArray[i].dict[dicomTagPatientName].Value[0] = dicomDictArray[i].dict[dicomTagPatientId].Value[0];
+			dicomDictArray[i].dict[patientNameDicomTag].Value[0] = dicomDictArray[i].dict[patientIdDicomTag].Value[0];
 			dicomTagValuesReplacedNum++;
 		}
 		for (const property in nemaModifiedTableObject) {
-			if (property === dicomTagPatientId) {
+			if (property === patientIdDicomTag) {
 				continue;
-			} else if (property === dicomTagPatientName) {
+			} else if (property === patientNameDicomTag) {
 				continue;
 			} else if (nemaModifiedTableObject[property][1] === 'K' && retainSafePrivateInputCheckbox.checked) {
 				continue;
@@ -185,7 +185,7 @@ saveProcessedFilesAsZipButton.onclick = function() {
 					}
 					continue;
 				}
-			} else if (nemaModifiedTableObject[property][6] === 'K' && retainDescriptionsInputCheckbox.checked) {
+			} else if (nemaModifiedTableObject[property][6] === 'K' && retainDescriptorsInputCheckbox.checked) {
 				continue;
 			} else {
 				if (property in dicomDictArray[i].dict) {
@@ -201,6 +201,35 @@ saveProcessedFilesAsZipButton.onclick = function() {
 				dicomTagValuesRemovedNum++;
 			}
 		}
+		dicomDictArray[i].dict['00120062'] = {
+			vr: 'LO',
+			Value: ['YES']
+		};
+		let deIdentificationMethodDicomTagValue = 'DCM:11310/';
+		if (retainSafePrivateInputCheckbox.checked) {
+			deIdentificationMethodDicomTagValue += '113111';
+		}
+		if (retainUidsInputCheckbox.checked) {
+			deIdentificationMethodDicomTagValue += '/113110';
+		}
+		if (retainDeviceIdentityInputCheckbox.checked) {
+			deIdentificationMethodDicomTagValue += '/113109';
+		}
+		if (retainPatientCharacteristicsInputCheckbox.checked) {
+			deIdentificationMethodDicomTagValue += '/113108';
+		}
+		if (retainDescriptorsInputCheckbox.checked) {
+			deIdentificationMethodDicomTagValue += '/113105';
+		}
+		if (dateProcessingSelect.value === 'keep') {
+			deIdentificationMethodDicomTagValue += '/113106';
+		} else if (dateProcessingSelect.value === 'offset') {
+			deIdentificationMethodDicomTagValue += '/113107';
+		}
+		dicomDictArray[i].dict['00120063'] = {
+			vr: 'LO',
+			Value: [deIdentificationMethodDicomTagValue]
+		};
 		hashCode(JSON.stringify(dicomDictArray[i])).then((hex) => {
 			const dicomTagSavePathArray = dicomTagSavePathInputText.value.slice(0, -1).split('/');
 			const dicomTagValueSavePath = dicomTagSavePathArray.map(x => dicomDictArray[i].dict[x].Value[0]).join('/') + '/';
