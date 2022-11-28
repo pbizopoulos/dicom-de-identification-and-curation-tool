@@ -2,7 +2,6 @@ from os import listdir, makedirs
 from os.path import exists, isfile, join
 from playwright.sync_api import sync_playwright
 from pydicom import dcmread
-from shutil import rmtree
 import hashlib
 import pydicom
 
