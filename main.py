@@ -29,7 +29,8 @@ def main():
                 dicom_data.save_as(join(generated_data_file_path, f'{index}.dcm'))
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(args=['--user-agent=playwright'])
-        page = browser.new_page()
+        context = browser.new_context(record_video_dir='bin/')
+        page = context.new_page()
         page.on('pageerror', lambda exception: (_ for _ in ()).throw(Exception(f'uncaught exception: {exception}')))
         page.goto('file:///work/docs/index.html')
         only_files_generated_data_file_path = [join(generated_data_file_path, file) for file in listdir(generated_data_file_path) if isfile(join(generated_data_file_path, file))]
@@ -43,6 +44,7 @@ def main():
         page.screenshot(path=join('bin', 'screenshot.png'))
         with open(join('bin', 'screenshot.png'), 'rb') as file:
             assert hashlib.sha256(file.read()).hexdigest() == 'b4b36f9a496c81ab42fb704d4c57344514bd7e6e23998a45bd47cade634cb01f'
+        context.close()
         browser.close()
 
 

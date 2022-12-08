@@ -38,6 +38,17 @@ function hashCode(string) {
 		return hashHex;
 	});
 }
+
+function saveData(data, fileName) {
+	const a = document.createElement('a');
+	document.body.appendChild(a);
+	const blob = new Blob(data);
+	const url = window.URL.createObjectURL(blob);
+	a.href = url;
+	a.download = fileName;
+	a.click();
+	window.URL.revokeObjectURL(url);
+}
 loadDirectoryInputFile.oninput = function() {
 	disableUI(true);
 	fileArray = event.currentTarget.files;
@@ -55,17 +66,6 @@ loadDirectoryInputFile.oninput = function() {
 	}
 	disableUI(false);
 };
-
-function saveData(data, fileName) {
-	const a = document.createElement('a');
-	document.body.appendChild(a);
-	const blob = new Blob(data);
-	const url = window.URL.createObjectURL(blob);
-	a.href = url;
-	a.download = fileName;
-	a.click();
-	window.URL.revokeObjectURL(url);
-}
 loadSessionInputFile.oninput = function() {
 	const file = event.currentTarget.files[0];
 	if (file.length === 0) {
@@ -80,14 +80,6 @@ loadSessionInputFile.oninput = function() {
 saveProcessedFilesAsZipButton.onclick = function() {
 	disableUI(true);
 	const zip = new JSZip();
-	let dateString = '';
-	if (navigator.userAgent === 'playwright') {
-		dateString = 'January 02, 2000 00:00:00';
-	} else {
-		const dateNow = new Date(Date.now());
-		dateString = dateNow.getTime() - dateNow.getTimezoneOffset() * 60000;
-	}
-	const date = new Date(dateString);
 	let dicomTagValuesRemovedNum = 0;
 	let dicomTagValuesReplacedNum = 0;
 	const patientIdDicomTag = '00100020';
@@ -163,19 +155,19 @@ saveProcessedFilesAsZipButton.onclick = function() {
 							const hours = dicomDictArray[i].dict[property].Value[0].slice(0, 2);
 							const minutes = dicomDictArray[i].dict[property].Value[0].slice(2, 4);
 							const seconds = dicomDictArray[i].dict[property].Value[0].slice(4, 6);
-							const hoursMinutesSecondsDate = new Date();
-							hoursMinutesSecondsDate.setHours(hours);
-							hoursMinutesSecondsDate.setMinutes(minutes);
-							hoursMinutesSecondsDate.setSeconds(seconds + sessionObject[patientId].secondsOffset);
-							const hoursWithOffset = (hoursMinutesSecondsDate.getHours()).toLocaleString('en-US', {
+							const date = new Date();
+							date.setHours(hours);
+							date.setMinutes(minutes);
+							date.setSeconds(seconds + sessionObject[patientId].secondsOffset);
+							const hoursWithOffset = (date.getHours()).toLocaleString('en-US', {
 								minimumIntegerDigits: 2,
 								useGrouping: false
 							});
-							const minutesWithOffset = (hoursMinutesSecondsDate.getMinutes()).toLocaleString('en-US', {
+							const minutesWithOffset = (date.getMinutes()).toLocaleString('en-US', {
 								minimumIntegerDigits: 2,
 								useGrouping: false
 							});
-							const secondsWithOffset = (hoursMinutesSecondsDate.getSeconds()).toLocaleString('en-US', {
+							const secondsWithOffset = (date.getSeconds()).toLocaleString('en-US', {
 								minimumIntegerDigits: 2,
 								useGrouping: false
 							});
@@ -231,6 +223,14 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			Value: [deIdentificationMethodDicomTagValue]
 		};
 		hashCode(JSON.stringify(dicomDictArray[i])).then((hex) => {
+			let dateString = '';
+			if (navigator.userAgent === 'playwright') {
+				dateString = 'January 02, 2000 00:00:00';
+			} else {
+				const dateNow = new Date(Date.now());
+				dateString = dateNow.getTime() - dateNow.getTimezoneOffset() * 60000;
+			}
+			const date = new Date(dateString);
 			const dicomTagSavePathArray = dicomTagSavePathInputText.value.slice(0, -1).split('/');
 			const dicomTagValueSavePath = dicomTagSavePathArray.map(x => dicomDictArray[i].dict[x].Value[0]).join('/') + '/';
 			const dicomTagValueSavePathArray = dicomTagValueSavePath.split('/');
