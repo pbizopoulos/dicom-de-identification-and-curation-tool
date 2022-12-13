@@ -28,9 +28,9 @@ def main():
         nema_modified_table_dict = dict(zip(dicom_tag_list, output))
         nema_modified_table_dict['00100010'][0] = 'Z'
         nema_modified_table_dict['00100020'][0] = 'Z'
-        with open(join('dist', 'nema-modified-table.js'), 'w') as file:
+        with open(join('dist', 'nema-modified-table.js'), 'w', encoding='utf-8') as file:
             file.write(f'const nemaModifiedTableObject = {json.dumps(nema_modified_table_dict)};')
-        with open(join('bin', 'nema-modified-table-default.csv'), 'w') as file:
+        with open(join('bin', 'nema-modified-table-default.csv'), 'w', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(['Tag', 'Action'])
             for key, value in nema_modified_table_dict.items():
@@ -42,7 +42,7 @@ def main():
                     writer.writerow([key, 'C'])
                 elif 'K' not in nema_modified_table_dict[key]:
                     writer.writerow([key, 'X'])
-        with open(join('dist', 'nema-modified-table.js'), 'rb') as file:
+        with open(join('dist', 'nema-modified-table.js'), 'rb', encoding='utf-8') as file:
             assert hashlib.sha256(file.read()).hexdigest() == '903f0c62874269f1ffbe5990f943a18ae55c51ad1ff446543ebf784aefc62434'
         browser.close()
 
