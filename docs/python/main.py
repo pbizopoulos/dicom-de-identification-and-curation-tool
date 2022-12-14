@@ -42,7 +42,7 @@ def main():
                     writer.writerow([key, 'C'])
                 elif 'K' not in nema_modified_table_dict[key]:
                     writer.writerow([key, 'X'])
-        with open(join('dist', 'nema-modified-table.js'), 'rb', encoding='utf-8') as file:
+        with open(join('dist', 'nema-modified-table.js'), 'rb') as file:
             assert hashlib.sha256(file.read()).hexdigest() == '903f0c62874269f1ffbe5990f943a18ae55c51ad1ff446543ebf784aefc62434'
         browser.close()
 
