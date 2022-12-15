@@ -40,7 +40,7 @@ def main():
         download = download_info.value
         download.save_as(join('bin', 'de-identified-files.zip'))
         with open(join('bin', 'de-identified-files.zip'), 'rb') as file:
-            assert hashlib.sha256(file.read()).hexdigest() == '44e64c9a6b748368998af41f9669c4300c92b278f2736cf2a83ddc79a9ed735e'
+            assert hashlib.sha256(file.read()).hexdigest() == '6ce13d6f3754db683e9130cf7498553d80a4a6ec935143793289939f55a4645e'
         page.screenshot(path=join('bin', 'screenshot.png'))
         with open(join('bin', 'screenshot.png'), 'rb') as file:
             assert hashlib.sha256(file.read()).hexdigest() == 'b4b36f9a496c81ab42fb704d4c57344514bd7e6e23998a45bd47cade634cb01f'
