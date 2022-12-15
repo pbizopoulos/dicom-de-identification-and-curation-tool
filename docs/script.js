@@ -49,6 +49,7 @@ function saveData(data, fileName) {
 	a.click();
 	window.URL.revokeObjectURL(url);
 }
+
 loadDirectoryInputFile.oninput = function() {
 	disableUI(true);
 	fileArray = event.currentTarget.files;
@@ -108,8 +109,8 @@ saveProcessedFilesAsZipButton.onclick = function() {
 					secondsOffset = 0;
 				}
 				sessionObject[patientId] = {
-					patientPseudoId: `${patientPseudoIdPrefixInputText.value}${patientPseudoIdBase}`,
 					daysOffset: daysOffset,
+					patientPseudoId: `${patientPseudoIdPrefixInputText.value}${patientPseudoIdBase}`,
 					secondsOffset: secondsOffset
 				};
 			}
@@ -194,8 +195,8 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			}
 		}
 		dicomDictArray[i].dict['00120062'] = {
-			vr: 'LO',
-			Value: ['YES']
+			Value: ['YES'],
+			vr: 'LO'
 		};
 		let deIdentificationMethodDicomTagValue = 'DCM:11310/';
 		if (retainSafePrivateInputCheckbox.checked) {
@@ -219,8 +220,8 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			deIdentificationMethodDicomTagValue += '/113107';
 		}
 		dicomDictArray[i].dict['00120063'] = {
-			vr: 'LO',
-			Value: [deIdentificationMethodDicomTagValue]
+			Value: [deIdentificationMethodDicomTagValue],
+			vr: 'LO'
 		};
 		hashCode(JSON.stringify(dicomDictArray[i])).then((hex) => {
 			let dateString = '';
