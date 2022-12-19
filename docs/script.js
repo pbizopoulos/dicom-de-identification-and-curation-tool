@@ -18,6 +18,10 @@ let fileArray = [];
 let fileReaderArray = [];
 let filesNum = 0;
 let sessionObject = {};
+loadDirectoryInputFile.oninput = loadDirectoryInputFileOnInput;
+loadSessionInputFile.oninput = loadSessionInputFileOnInput;
+saveProcessedFilesAsZipButton.onclick = saveProcessedFilesAsZipButtonOnClick;
+window.onload = windowOnLoad;
 
 function disableUI(argument) {
 	dateProcessingSelect.disabled = argument;
@@ -39,18 +43,7 @@ function hashCode(string) {
 	});
 }
 
-function saveData(data, fileName) {
-	const a = document.createElement('a');
-	document.body.appendChild(a);
-	const blob = new Blob(data);
-	const url = window.URL.createObjectURL(blob);
-	a.href = url;
-	a.download = fileName;
-	a.click();
-	window.URL.revokeObjectURL(url);
-}
-
-loadDirectoryInputFile.oninput = function() {
+function loadDirectoryInputFileOnInput() {
 	disableUI(true);
 	fileArray = event.currentTarget.files;
 	filesNum = fileArray.length;
@@ -66,8 +59,9 @@ loadDirectoryInputFile.oninput = function() {
 		};
 	}
 	disableUI(false);
-};
-loadSessionInputFile.oninput = function() {
+}
+
+function loadSessionInputFileOnInput() {
 	const file = event.currentTarget.files[0];
 	if (file.length === 0) {
 		return;
@@ -77,8 +71,20 @@ loadSessionInputFile.oninput = function() {
 	fileReader.onload = function(e) {
 		sessionObject = JSON.parse(e.target.result);
 	};
-};
-saveProcessedFilesAsZipButton.onclick = function() {
+}
+
+function saveData(data, fileName) {
+	const a = document.createElement('a');
+	document.body.appendChild(a);
+	const blob = new Blob(data);
+	const url = window.URL.createObjectURL(blob);
+	a.href = url;
+	a.download = fileName;
+	a.click();
+	window.URL.revokeObjectURL(url);
+}
+
+function saveProcessedFilesAsZipButtonOnClick() {
 	disableUI(true);
 	const zip = new JSZip();
 	let dicomTagValuesRemovedNum = 0;
@@ -261,8 +267,10 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			}
 		});
 	}
-};
-disableUI(true);
-window.onload = function() {
+}
+
+function windowOnLoad() {
 	document.body.style.display = '';
-};
+}
+
+disableUI(true);
