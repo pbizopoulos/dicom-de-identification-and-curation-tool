@@ -119,28 +119,28 @@ saveProcessedFilesAsZipButton.onclick = function() {
 			dicomDictArray[i].dict[patientNameDicomTag].Value[0] = dicomDictArray[i].dict[patientIdDicomTag].Value[0];
 			dicomTagValuesReplacedNum++;
 		}
-		for (const property in nemaModifiedTableObject) {
-			if (property === patientIdDicomTag) {
+		for (const dicomTag in dicomTagToNemaActionObject) {
+			if (dicomTag === patientIdDicomTag) {
 				continue;
-			} else if (property === patientNameDicomTag) {
+			} else if (dicomTag === patientNameDicomTag) {
 				continue;
-			} else if (nemaModifiedTableObject[property][1] === 'K' && retainSafePrivateInputCheckbox.checked) {
+			} else if (dicomTagToNemaActionObject[dicomTag][1] === 'K' && retainSafePrivateInputCheckbox.checked) {
 				continue;
-			} else if (nemaModifiedTableObject[property][2] === 'K' && retainUidsInputCheckbox.checked) {
+			} else if (dicomTagToNemaActionObject[dicomTag][2] === 'K' && retainUidsInputCheckbox.checked) {
 				continue;
-			} else if (nemaModifiedTableObject[property][3] === 'K' && retainDeviceIdentityInputCheckbox.checked) {
+			} else if (dicomTagToNemaActionObject[dicomTag][3] === 'K' && retainDeviceIdentityInputCheckbox.checked) {
 				continue;
-			} else if (nemaModifiedTableObject[property][4] === 'K' && retainPatientCharacteristicsInputCheckbox.checked) {
+			} else if (dicomTagToNemaActionObject[dicomTag][4] === 'K' && retainPatientCharacteristicsInputCheckbox.checked) {
 				continue;
-			} else if (nemaModifiedTableObject[property][5] === 'C') {
+			} else if (dicomTagToNemaActionObject[dicomTag][5] === 'C') {
 				if (dateProcessingSelect.value === 'keep') {
 					continue;
 				} else if (dateProcessingSelect.value === 'offset') {
-					if (property in dicomDictArray[i].dict) {
-						if (dicomDictArray[i].dict[property].vr === 'DA') {
-							const year = parseInt(dicomDictArray[i].dict[property].Value[0].slice(0, 4));
-							const month = parseInt(dicomDictArray[i].dict[property].Value[0].slice(4, 6)) - 1;
-							const day = parseInt(dicomDictArray[i].dict[property].Value[0].slice(6, 8));
+					if (dicomTag in dicomDictArray[i].dict) {
+						if (dicomDictArray[i].dict[dicomTag].vr === 'DA') {
+							const year = parseInt(dicomDictArray[i].dict[dicomTag].Value[0].slice(0, 4));
+							const month = parseInt(dicomDictArray[i].dict[dicomTag].Value[0].slice(4, 6)) - 1;
+							const day = parseInt(dicomDictArray[i].dict[dicomTag].Value[0].slice(6, 8));
 							const dateWithOffset = new Date(new Date(year, month, day).getTime() + sessionObject[patientId].daysOffset * 24 * 60 * 60 * 1000);
 							const yearWithOffset = dateWithOffset.getFullYear();
 							const monthWithOffset = (dateWithOffset.getMonth() - 1).toLocaleString('en-US', {
@@ -151,11 +151,11 @@ saveProcessedFilesAsZipButton.onclick = function() {
 								minimumIntegerDigits: 2,
 								useGrouping: false
 							});
-							dicomDictArray[i].dict[property].Value[0] = `${yearWithOffset}${monthWithOffset}${dayWithOffset}`;
-						} else if (dicomDictArray[i].dict[property].vr === 'TM') {
-							const hours = dicomDictArray[i].dict[property].Value[0].slice(0, 2);
-							const minutes = dicomDictArray[i].dict[property].Value[0].slice(2, 4);
-							const seconds = dicomDictArray[i].dict[property].Value[0].slice(4, 6);
+							dicomDictArray[i].dict[dicomTag].Value[0] = `${yearWithOffset}${monthWithOffset}${dayWithOffset}`;
+						} else if (dicomDictArray[i].dict[dicomTag].vr === 'TM') {
+							const hours = dicomDictArray[i].dict[dicomTag].Value[0].slice(0, 2);
+							const minutes = dicomDictArray[i].dict[dicomTag].Value[0].slice(2, 4);
+							const seconds = dicomDictArray[i].dict[dicomTag].Value[0].slice(4, 6);
 							const date = new Date();
 							date.setHours(hours);
 							date.setMinutes(minutes);
@@ -172,21 +172,21 @@ saveProcessedFilesAsZipButton.onclick = function() {
 								minimumIntegerDigits: 2,
 								useGrouping: false
 							});
-							dicomDictArray[i].dict[property].Value[0] = `${hoursWithOffset}${minutesWithOffset}${secondsWithOffset}`;
+							dicomDictArray[i].dict[dicomTag].Value[0] = `${hoursWithOffset}${minutesWithOffset}${secondsWithOffset}`;
 							dicomTagValuesReplacedNum++;
 						}
 					}
 					continue;
 				}
-			} else if (nemaModifiedTableObject[property][6] === 'K' && retainDescriptorsInputCheckbox.checked) {
+			} else if (dicomTagToNemaActionObject[dicomTag][6] === 'K' && retainDescriptorsInputCheckbox.checked) {
 				continue;
 			} else {
-				if (property in dicomDictArray[i].dict) {
-					dicomDictArray[i].dict[property].Value = [];
+				if (dicomTag in dicomDictArray[i].dict) {
+					dicomDictArray[i].dict[dicomTag].Value = [];
 				} else {
-					for (let dicomTagUpperLevel in dicomDictArray[i].dict) {
-						if (dicomDictArray[i].dict[dicomTagUpperLevel].vr === 'SQ' && dicomDictArray[i].dict[dicomTagUpperLevel].Value[0] && property in dicomDictArray[i].dict[dicomTagUpperLevel].Value[0]) {
-							dicomDictArray[i].dict[dicomTagUpperLevel].Value[0][property].Value = [];
+					for (const dicomTagUpperLevel in dicomDictArray[i].dict) {
+						if (dicomDictArray[i].dict[dicomTagUpperLevel].vr === 'SQ' && dicomDictArray[i].dict[dicomTagUpperLevel].Value[0] && dicomTag in dicomDictArray[i].dict[dicomTagUpperLevel].Value[0]) {
+							dicomDictArray[i].dict[dicomTagUpperLevel].Value[0][dicomTag].Value = [];
 							break;
 						}
 					}

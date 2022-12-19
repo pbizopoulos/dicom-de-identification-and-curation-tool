@@ -25,26 +25,26 @@ def main():
         retain_description_option_list = ['K' if retain_description_option == 'C' else retain_description_option for retain_description_option in retain_description_option_list]
         output = [basic_profile_list, retain_safe_private_option_list, retain_uids_option_list, retain_device_identity_option_list, retain_patient_characteristics_option_list, retain_long_modified_dates_option_list, retain_description_option_list]
         output = list(map(list, zip(*output)))
-        nema_modified_table_dict = dict(zip(dicom_tag_list, output))
-        nema_modified_table_dict['00100010'][0] = 'Z'
-        nema_modified_table_dict['00100020'][0] = 'Z'
-        with open(join('dist', 'nema-modified-table.js'), 'w', encoding='utf-8') as file:
-            file.write(f'const nemaModifiedTableObject = {json.dumps(nema_modified_table_dict)};')
-        with open(join('bin', 'nema-modified-table-default.csv'), 'w', encoding='utf-8', newline='') as file:
+        dicom_tag_to_nema_action_dict = dict(zip(dicom_tag_list, output))
+        dicom_tag_to_nema_action_dict['00100010'][0] = 'Z'
+        dicom_tag_to_nema_action_dict['00100020'][0] = 'Z'
+        with open(join('dist', 'dicom-tag-to-nema-action.js'), 'w', encoding='utf-8') as file:
+            file.write(f'const dicomTagToNemaActionObject = {json.dumps(dicom_tag_to_nema_action_dict)};')
+        with open(join('bin', 'dicom-tag-to-nema-action-default.csv'), 'w', encoding='utf-8', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['Name', 'Tag', 'Action'])
             dicom_tag_name_list = [child.query_selector_all('td')[0].inner_text() for child in child_list]
-            for (key, value), dicom_tag_name in zip(nema_modified_table_dict.items(), dicom_tag_name_list):
+            for (key, value), dicom_tag_name in zip(dicom_tag_to_nema_action_dict.items(), dicom_tag_name_list):
                 if key == '00100010':
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'Z'])
                 elif key == '00100020':
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'Z'])
-                elif 'C' in nema_modified_table_dict[key]:
+                elif 'C' in dicom_tag_to_nema_action_dict[key]:
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'C'])
-                elif 'K' not in nema_modified_table_dict[key]:
+                elif 'K' not in dicom_tag_to_nema_action_dict[key]:
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'X'])
-        with open(join('dist', 'nema-modified-table.js'), 'rb') as file:
-            assert hashlib.sha256(file.read()).hexdigest() == '903f0c62874269f1ffbe5990f943a18ae55c51ad1ff446543ebf784aefc62434'
+        with open(join('dist', 'dicom-tag-to-nema-action.js'), 'rb') as file:
+            assert hashlib.sha256(file.read()).hexdigest() == '77ab62f0b43fb04df6e6058e5f20c97a6c799928de261d75645ef65f822b0c14'
         browser.close()
 
 
