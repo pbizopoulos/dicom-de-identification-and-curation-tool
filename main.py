@@ -1,9 +1,10 @@
+import hashlib
 from os import listdir, makedirs
 from os.path import exists, isfile, join
+
+import pydicom
 from playwright.sync_api import sync_playwright
 from pydicom import dcmread
-import hashlib
-import pydicom
 
 
 def main():

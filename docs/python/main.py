@@ -1,8 +1,9 @@
-from os.path import join
-from playwright.sync_api import sync_playwright
 import csv
 import hashlib
 import json
+from os.path import join
+
+from playwright.sync_api import sync_playwright
 
 
 def main():
