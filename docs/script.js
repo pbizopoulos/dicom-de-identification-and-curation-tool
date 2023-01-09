@@ -72,7 +72,7 @@ function loadDirectoryInputFileOnInput() {
 		let fileReader = new FileReader();
 		fileReader.onload = function () {
 			fileReaderArray.push(fileReader.result);
-		}
+		};
 		fileReader.readAsArrayBuffer(fileArray[i]);
 	}
 	filesSizeTotalSpan.textContent = formatBytes(filesSizeTotal);
