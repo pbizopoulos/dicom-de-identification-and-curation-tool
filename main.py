@@ -44,7 +44,7 @@ def main():
             assert hashlib.sha256(file.read()).hexdigest() == '6ce13d6f3754db683e9130cf7498553d80a4a6ec935143793289939f55a4645e'
         page.screenshot(path=join('bin', 'screenshot.png'))
         with open(join('bin', 'screenshot.png'), 'rb') as file:
-            assert hashlib.sha256(file.read()).hexdigest() == 'b4b36f9a496c81ab42fb704d4c57344514bd7e6e23998a45bd47cade634cb01f'
+            assert hashlib.sha256(file.read()).hexdigest() == '6c6c4e491768a3b117f89306eee84aea0a3dd82c426f36df6948cd73fa430f9f'
         context.close()
         browser.close()
 

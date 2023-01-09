@@ -8,6 +8,7 @@
 		<link href="data:," rel="icon">
 		<script defer src="https://cdn.jsdelivr.net/npm/dcmjs@latest/build/dcmjs.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/jszip@latest/dist/jszip.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/g/filesaver.js"></script>
 		<script defer src="python/dist/dicom-tag-to-nema-action.js"></script>
 		<script defer src="script.js"></script>
 	</head>
@@ -18,8 +19,12 @@
 		</nav>
 		<h3>Input</h3>
 		<div>
-			<label for="load-directory-input-file">Load directory:</label>
-			<input id="load-directory-input-file" name="load-directory-input-file" type="file" webkitdirectory directory multiple>
+			<label for="load-directory-input-file">Load directory with DICOM files:</label>
+			<input id="load-directory-input-file" name="load-directory-input-file" type="file" webkitdirectory multiple>
+		</div>
+		<div>
+			<label>Files size total:</label>
+			<span id="files-size-total-span">0</span>
 		</div>
 		<div>
 			<label for="load-session-input-file">Load session file:</label>
@@ -79,6 +84,10 @@
 		<div>
 			<label>DICOM tag values replaced:</label>
 			<span id="dicom-tag-values-replaced-num-span">0</span>
+		</div>
+		<div>
+			<label>Zip progress:</label>
+			<span id="zip-progress">0%</span>
 		</div>
 	</body>
 
