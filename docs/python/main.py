@@ -35,7 +35,7 @@ def main():
             writer = csv.writer(file)
             writer.writerow(['Name', 'Tag', 'Action'])
             dicom_tag_name_list = [child.query_selector_all('td')[0].inner_text() for child in child_list]
-            for (key, value), dicom_tag_name in zip(dicom_tag_to_nema_action_dict.items(), dicom_tag_name_list):
+            for (key, _value), dicom_tag_name in zip(dicom_tag_to_nema_action_dict.items(), dicom_tag_name_list):
                 if key == '00100010':
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'Z'])
                 elif key == '00100020':
