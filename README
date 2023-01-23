@@ -6,7 +6,7 @@ POSIX Utilities
 Git
 Docker
  
-# Check and build code
+# Download, check and build
 git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation-tool
 cd dicom-de-identification-and-curation-tool/
 cd docs/python/ && make check all && cd ../..
