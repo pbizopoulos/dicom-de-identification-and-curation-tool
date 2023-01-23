@@ -2,11 +2,11 @@
 https://pbizopoulos.github.io/dicom-de-identification-and-curation-tool
 
 # Requirements
-POSIX shell & utilities
+POSIX Utilities
 Git
 Docker
  
-# Check code and build
+# Check and build code
 git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation-tool
 cd dicom-de-identification-and-curation-tool/
 cd docs/python/ && make check all && cd ../..
