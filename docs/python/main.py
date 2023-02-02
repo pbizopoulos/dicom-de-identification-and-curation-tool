@@ -45,7 +45,7 @@ def main():
                 elif 'K' not in dicom_tag_to_nema_action_dict[key]:
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'X'])
         with open(join('dist', 'dicom-tag-to-nema-action.js'), 'rb') as file:
-            assert hashlib.sha256(file.read()).hexdigest() == 'f26ef95de3fe6d9a474250355599efe291cdc282d476168f1be7e71651fd309d'
+            assert hashlib.sha256(file.read()).hexdigest() == '0a3c496113b9c765044d7c778228ae270796d7410861011683d2056b127d337f'
         browser.close()
 
 
