@@ -1,4 +1,4 @@
-import hashlib
+from hashlib import sha256
 from os import listdir, makedirs
 from os.path import exists, isfile, join
 
@@ -7,8 +7,8 @@ from playwright.sync_api import sync_playwright
 from pydicom import dcmread
 
 
-def main():
-    dicom_data = dcmread(pydicom.data.get_testdata_file('rtdose_1frame.dcm'))
+def main() -> None:
+    dicom_data = dcmread(pydicom.data.get_testdata_file('rtdose_1frame.dcm')) # type: ignore[arg-type]
     generated_data_file_path = join('bin', 'generated-data')
     if not exists(generated_data_file_path):
         makedirs(generated_data_file_path, exist_ok=True)
@@ -41,10 +41,10 @@ def main():
         download = download_info.value
         download.save_as(join('bin', 'de-identified-files.zip'))
         with open(join('bin', 'de-identified-files.zip'), 'rb') as file:
-            assert hashlib.sha256(file.read()).hexdigest() == '6ce13d6f3754db683e9130cf7498553d80a4a6ec935143793289939f55a4645e'
+            assert sha256(file.read()).hexdigest() == '6ce13d6f3754db683e9130cf7498553d80a4a6ec935143793289939f55a4645e'
         page.screenshot(path=join('bin', 'screenshot.png'))
         with open(join('bin', 'screenshot.png'), 'rb') as file:
-            assert hashlib.sha256(file.read()).hexdigest() == '6c6c4e491768a3b117f89306eee84aea0a3dd82c426f36df6948cd73fa430f9f'
+            assert sha256(file.read()).hexdigest() == '6c6c4e491768a3b117f89306eee84aea0a3dd82c426f36df6948cd73fa430f9f'
         context.close()
         browser.close()
 
