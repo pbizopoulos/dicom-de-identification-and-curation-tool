@@ -1,7 +1,7 @@
 import csv
 import json
 from hashlib import sha256
-from os.path import join
+from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
@@ -29,9 +29,11 @@ def main() -> None:
         dicom_tag_to_nema_action = dict(zip(dicom_tags, output))
         dicom_tag_to_nema_action['00100010'][0] = 'Z'
         dicom_tag_to_nema_action['00100020'][0] = 'Z'
-        with open(join('dist', 'dicom-tag-to-nema-action.js'), 'w', encoding='utf-8') as file:
-            file.write(f'const dicomTagToNemaActionObject = {json.dumps(dicom_tag_to_nema_action)};')
-        with open(join('bin', 'dicom-tag-to-nema-action-default.csv'), 'w', encoding='utf-8', newline='') as file:
+        tmp = json.dumps(dicom_tag_to_nema_action)
+        with Path('dist/dicom-tag-to-nema-action.js').open('w', encoding='utf-8') as file:
+            file.write(f'const dicomTagToNemaActionObject = {tmp};')
+        assert sha256(tmp.encode('utf-8')).hexdigest() == '8588ee04044b4ce7dc405c283dd7fa964961370fbffe764fb9b424df51d3b2b3'
+        with Path('bin/dicom-tag-to-nema-action-default.csv').open('w', encoding='utf-8', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['Name', 'Tag', 'Action'])
             dicom_tag_names = [child.query_selector_all('td')[0].inner_text() for child in children]
@@ -42,8 +44,6 @@ def main() -> None:
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'C'])
                 elif 'K' not in dicom_tag_to_nema_action[key]:
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'X'])
-        with open(join('dist', 'dicom-tag-to-nema-action.js'), 'rb') as file:
-            assert sha256(file.read()).hexdigest() == '0a3c496113b9c765044d7c778228ae270796d7410861011683d2056b127d337f'
         browser.close()
 
 
