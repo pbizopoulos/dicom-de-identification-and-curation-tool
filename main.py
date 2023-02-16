@@ -32,7 +32,7 @@ def main() -> None:
         browser = playwright.chromium.launch(args=['--user-agent=playwright'])
         context = browser.new_context(record_video_dir='bin/')
         page = context.new_page()
-        page.on('pageerror', lambda exception: (_ for _ in ()).throw(Exception(f'uncaught exception: {exception}')))
+        page.on('pageerror', lambda exception: (_ for _ in ()).throw(Exception(f'uncaught exception: {exception}'))) # type: ignore[call-overload]
         page.goto('file:///usr/src/app/docs/index.html')
         only_files_generated_data_file_path = [generated_data_file_path / file for file in listdir(generated_data_file_path) if (generated_data_file_path / file).is_file()]
         page.set_input_files('#load-directory-input-file', sorted(only_files_generated_data_file_path))
