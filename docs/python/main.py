@@ -25,8 +25,8 @@ def main() -> None:
         retain_description_option = [child.query_selector_all('td')[12].inner_text() for child in children]
         retain_description_option = ['K' if i == 'C' else i for i in retain_description_option]
         output = [basic_profile, retain_safe_private_option, retain_uids_option, retain_device_identity_option, retain_patient_characteristics_option, retain_long_modified_dates_option, retain_description_option]
-        output = list(map(list, zip(*output)))
-        dicom_tag_to_nema_action = dict(zip(dicom_tags, output))
+        output = list(map(list, zip(*output))) # noqa: B905
+        dicom_tag_to_nema_action = dict(zip(dicom_tags, output)) # noqa: B905
         dicom_tag_to_nema_action['00100010'][0] = 'Z'
         dicom_tag_to_nema_action['00100020'][0] = 'Z'
         tmp = json.dumps(dicom_tag_to_nema_action)
@@ -37,7 +37,7 @@ def main() -> None:
             writer = csv.writer(file)
             writer.writerow(['Name', 'Tag', 'Action'])
             dicom_tag_names = [child.query_selector_all('td')[0].inner_text() for child in children]
-            for (key, _), dicom_tag_name in zip(dicom_tag_to_nema_action.items(), dicom_tag_names):
+            for (key, _), dicom_tag_name in zip(dicom_tag_to_nema_action.items(), dicom_tag_names): # noqa: B905
                 if key in ['00100010', '00100020']:
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'Z'])
                 elif 'C' in dicom_tag_to_nema_action[key]:
