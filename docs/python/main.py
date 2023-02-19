@@ -10,7 +10,7 @@ def main() -> None:
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         page = browser.new_page()
-        page.on('pageerror', lambda exception: (_ for _ in ()).throw(Exception(f'uncaught exception: {exception}'))) # type: ignore[call-overload]
+        page.on('pageerror', lambda exception: print(f'uncaught exception: {exception}')) # noqa: 201
         page.goto('https://dicom.nema.org/medical/dicom/current/output/chtml/part15/chapter_e.html')
         children = page.query_selector_all('table')[3].query_selector_all('xpath=child::*')[1].query_selector_all('xpath=child::*')
         dicom_tags = [child.query_selector_all('td')[1].inner_text()[1:10].replace(',', '') for child in children]
