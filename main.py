@@ -21,7 +21,7 @@ def main() -> None:
                 dicom_data[8, 96].value = 'CT'
             elif index % 3 == 1:
                 dicom_data[8, 96].value = 'MG'
-            elif index % 3 == 2:
+            elif index % 3 == 2: # noqa: PLR2004
                 dicom_data[8, 96].value = 'MR'
             if index % 7:
                 (generated_data_file_path / f'folder-{index}').mkdir(exist_ok=True)
@@ -32,7 +32,7 @@ def main() -> None:
         browser = playwright.chromium.launch(args=['--user-agent=playwright'])
         context = browser.new_context(record_video_dir='bin/')
         page = context.new_page()
-        page.on('pageerror', lambda exception: print(f'uncaught exception: {exception}')) # noqa: 201
+        page.on('pageerror', lambda exception: print(f'uncaught exception: {exception}')) # noqa: T201
         page.goto('file:///usr/src/app/docs/index.html')
         only_files_generated_data_file_path = [generated_data_file_path / file for file in listdir(generated_data_file_path) if (generated_data_file_path / file).is_file()]
         page.set_input_files('#load-directory-input-file', sorted(only_files_generated_data_file_path))
