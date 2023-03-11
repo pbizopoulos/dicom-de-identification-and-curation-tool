@@ -21,7 +21,7 @@ def main() -> None:
                 dicom_data[8, 96].value = 'CT'
             elif index % 3 == 1:
                 dicom_data[8, 96].value = 'MG'
-            elif index % 3 == 2: # noqa: PLR2004
+            elif index % 3 == 2:
                 dicom_data[8, 96].value = 'MR'
             if index % 7:
                 (generated_data_file_path / f'folder-{index}').mkdir(exist_ok=True)
