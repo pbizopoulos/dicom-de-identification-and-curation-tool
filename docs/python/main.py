@@ -3,14 +3,14 @@ import json
 from hashlib import sha256
 from pathlib import Path
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import Error, sync_playwright
 
 
 def main() -> None:
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         page = browser.new_page()
-        page.on('pageerror', lambda exception: print(f'uncaught exception: {exception}')) # noqa: 201
+        page.on('pageerror', page_error)
         page.goto('https://dicom.nema.org/medical/dicom/current/output/chtml/part15/chapter_e.html')
         children = page.query_selector_all('table')[3].query_selector_all('xpath=child::*')[1].query_selector_all('xpath=child::*')
         dicom_tags = [child.query_selector_all('td')[1].inner_text()[1:10].replace(',', '') for child in children]
@@ -45,6 +45,10 @@ def main() -> None:
                 elif 'K' not in dicom_tag_to_nema_action[key]:
                     writer.writerow([dicom_tag_name.replace('\n', ' '), key, 'X'])
         browser.close()
+
+
+def page_error(exception: Error) -> None:
+    raise exception
 
 
 if __name__ == '__main__':

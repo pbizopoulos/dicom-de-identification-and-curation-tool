@@ -3,7 +3,7 @@ from os import listdir
 from pathlib import Path
 
 import pydicom
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import Error, sync_playwright
 from pydicom import dcmread
 
 
@@ -32,7 +32,7 @@ def main() -> None:
         browser = playwright.chromium.launch(args=['--user-agent=playwright'])
         context = browser.new_context(record_video_dir='bin/')
         page = context.new_page()
-        page.on('pageerror', lambda exception: print(f'uncaught exception: {exception}')) # noqa: T201
+        page.on('pageerror', page_error)
         page.goto('file:///usr/src/app/docs/index.html')
         only_files_generated_data_file_path = [generated_data_file_path / file for file in listdir(generated_data_file_path) if (generated_data_file_path / file).is_file()]
         page.set_input_files('#load-directory-input-file', sorted(only_files_generated_data_file_path))
@@ -47,6 +47,10 @@ def main() -> None:
             assert sha256(file.read()).hexdigest() == '6c6c4e491768a3b117f89306eee84aea0a3dd82c426f36df6948cd73fa430f9f'
         context.close()
         browser.close()
+
+
+def page_error(exception: Error) -> None:
+    raise exception
 
 
 if __name__ == '__main__':
