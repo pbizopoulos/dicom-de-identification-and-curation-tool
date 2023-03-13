@@ -69,7 +69,7 @@
 		fileArray = event.currentTarget.files;
 		if (!fileArray.length) return;
 		for (let i = 0; i < fileArray.length; i++) {
-			let filePromise = new Promise(resolve => {
+			let filePromise = new Promise((resolve) => {
 				filesSizeTotal += fileArray[i].size;
 				let fileReader = new FileReader();
 				fileReader.readAsArrayBuffer(fileArray[i]);
