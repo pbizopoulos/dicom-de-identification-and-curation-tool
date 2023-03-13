@@ -69,8 +69,13 @@
 		fileArray = event.currentTarget.files;
 		if (!fileArray.length) return;
 		for (let i = 0; i < fileArray.length; i++) {
-			filesSizeTotal += fileArray[i].size;
-			fileReaderArray.push(readFileAsArrayBuffer(fileArray[i]));
+			let filePromise = new Promise(resolve => {
+				filesSizeTotal += fileArray[i].size;
+				let fileReader = new FileReader();
+				fileReader.readAsArrayBuffer(fileArray[i]);
+				fileReader.onload = () => resolve(fileReader.result);
+			});
+			fileReaderArray.push(filePromise);
 		}
 		filesSizeTotalSpan.textContent = formatBytes(filesSizeTotal);
 		if (filesSizeTotal > 1000000000) {
@@ -91,19 +96,6 @@
 		fileReader.onload = function (e) {
 			sessionObject = JSON.parse(e.target.result);
 		};
-	}
-
-	function readFileAsArrayBuffer(file) {
-		return new Promise(function (resolve, reject) {
-			let fileReader = new FileReader();
-			fileReader.onload = function () {
-				resolve(fileReader.result);
-			};
-			fileReader.onerror = function () {
-				reject(fileReader);
-			};
-			fileReader.readAsArrayBuffer(file);
-		});
 	}
 
 	function saveProcessedFilesAsZipButtonOnClick() {
