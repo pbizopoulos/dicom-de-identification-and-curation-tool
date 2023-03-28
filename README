@@ -9,6 +9,6 @@ Docker
 # Download, check and build
 git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation-tool
 cd dicom-de-identification-and-curation-tool/
-cd docs/python/ && make check all && cd ../..
-cd docs/ && make check all && cd ..
-make check all
+cd docs/python/ && make clean check all && cd ../..
+cd docs/ && make clean check all && cd ..
+make clean check all
