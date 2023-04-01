@@ -1,4 +1,4 @@
-FROM python:3.11.1
+FROM python:3.11.2
 ENV HOME=/usr/src/app/bin
 ENV PYTHONDONTWRITEBYTECODE=1
 WORKDIR /usr/src/app
