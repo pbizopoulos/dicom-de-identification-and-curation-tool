@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: 'docker'
-    directory: '/'
+    directory: '/python/'
     schedule:
       interval: 'monthly'
   - package-ecosystem: 'docker'
@@ -18,5 +18,13 @@ updates:
       interval: 'monthly'
   - package-ecosystem: 'npm'
     directory: '/docs/'
+    schedule:
+      interval: 'monthly'
+  - package-ecosystem: 'pip'
+    directory: '/docs/python/'
+    schedule:
+      interval: 'monthly'
+  - package-ecosystem: 'pip'
+    directory: '/python/'
     schedule:
       interval: 'monthly'

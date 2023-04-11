@@ -33,7 +33,7 @@ def main() -> None:
         context = browser.new_context(record_video_dir="bin/")
         page = context.new_page()
         page.on("pageerror", page_error)
-        page.goto("file:///usr/src/app/docs/index.html")
+        page.goto("https://dicom-de-identification-and-curation-tool.incisive.iti.gr/")
         only_files_generated_data_file_path = [generated_data_file_path / file for file in listdir(generated_data_file_path) if (generated_data_file_path / file).is_file()]
         page.set_input_files("#load-directory-input-file", sorted(only_files_generated_data_file_path))
         with page.expect_download() as download_info:
