@@ -10,6 +10,9 @@ from pydicom import dcmread
 
 class TestWebApplication(unittest.TestCase):
     def setUp(self: "TestWebApplication") -> None:
+        bin_file_path = Path("bin")
+        if not bin_file_path.exists():
+            bin_file_path.mkdir(parents=True)
         dicom_data = dcmread(pydicom.data.get_testdata_file("rtdose_1frame.dcm")) # type: ignore[arg-type]
         generated_data_file_path = Path("bin/generated-data")
         if not generated_data_file_path.exists():
