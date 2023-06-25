@@ -8,9 +8,6 @@ import pandas as pd
 
 
 def main() -> None:
-    bin_file_path = Path("bin")
-    if not bin_file_path.exists():
-        bin_file_path.mkdir(parents=True)
     with request.urlopen(  # noqa: S310
         "https://dicom.nema.org/medical/dicom/current/output/chtml/part15/chapter_e.html",
     ) as response:
