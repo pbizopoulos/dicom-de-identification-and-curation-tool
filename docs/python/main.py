@@ -49,7 +49,7 @@ def main() -> None:
         sha256(file_content.encode("utf-8")).hexdigest()
         == "54dfa7ecb18b80983e18f2b3a629b588eb0c9e6f26e6c4b56026321ac4d5baaf"
     )
-    with Path("bin/dicom-tag-to-nema-action-default.csv").open(
+    with Path("tmp/dicom-tag-to-nema-action-default.csv").open(
         "w",
         encoding="utf-8",
         newline="",

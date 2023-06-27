@@ -10,12 +10,9 @@ from pydicom import dcmread
 
 class TestWebApplication(unittest.TestCase):
     def setUp(self: "TestWebApplication") -> None:
-        bin_file_path = Path("bin")
-        if not bin_file_path.exists():
-            bin_file_path.mkdir(parents=True)
         testdata_file = pydicom.data.get_testdata_file("rtdose_1frame.dcm")
         dicom_data = dcmread(testdata_file)  # type: ignore[arg-type]
-        generated_data_file_path = Path("bin/generated-data")
+        generated_data_file_path = Path("tmp/generated-data")
         if not generated_data_file_path.exists():
             generated_data_file_path.mkdir(exist_ok=True)
             for index in range(1000):
@@ -44,7 +41,7 @@ class TestWebApplication(unittest.TestCase):
     def test_web_application(self: "TestWebApplication") -> None:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(args=["--user-agent=playwright"])
-            context = browser.new_context(record_video_dir="bin/")
+            context = browser.new_context(record_video_dir="tmp/")
             page = context.new_page()
             page.on("pageerror", self.page_error)
             page.goto(
@@ -62,14 +59,14 @@ class TestWebApplication(unittest.TestCase):
             with page.expect_download() as download_info:
                 page.click("#save-processed-files-as-zip-button")
             download = download_info.value
-            download.save_as("bin/de-identified-files.zip")
-            with Path("bin/de-identified-files.zip").open("rb") as file:
+            download.save_as("tmp/de-identified-files.zip")
+            with Path("tmp/de-identified-files.zip").open("rb") as file:
                 assert (
                     hashlib.sha256(file.read()).hexdigest()
                     == "6ce13d6f3754db683e9130cf7498553d80a4a6ec935143793289939f55a4645e"  # noqa: E501
                 )
-            page.screenshot(path="bin/screenshot.png")
-            with Path("bin/screenshot.png").open("rb") as file:
+            page.screenshot(path="tmp/screenshot.png")
+            with Path("tmp/screenshot.png").open("rb") as file:
                 assert (
                     hashlib.sha256(file.read()).hexdigest()
                     == "928e777b56497f0570e7a316ec4d1b1a0b3825bb72aff44df1cdcdf98c9f0022"  # noqa: E501
