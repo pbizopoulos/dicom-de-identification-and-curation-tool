@@ -3,7 +3,7 @@ name = "UNKNOWN"
 version = "0.0.0"
 dependencies = [
 	"playwright==1.35.0",
-	"pydicom==2.3.2",
+	"pydicom==2.4.1",
 ]
 
 [project.optional-dependencies]
