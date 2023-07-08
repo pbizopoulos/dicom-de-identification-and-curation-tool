@@ -47,7 +47,7 @@ def main() -> None:
         file.write(file_content)
     assert (
         sha256(file_content.encode("utf-8")).hexdigest()
-        == "54dfa7ecb18b80983e18f2b3a629b588eb0c9e6f26e6c4b56026321ac4d5baaf"
+        == "9f32504b7187d7a3293d84ac302c788e0b19d368f66353c5c396d9e342636fa4"
     )
     with Path("tmp/dicom-tag-to-nema-action-default.csv").open(
         "w",
