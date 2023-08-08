@@ -2,7 +2,7 @@
 name = "UNKNOWN"
 version = "0.0.0"
 dependencies = [
-	"playwright==1.35.0",
+	"playwright==1.36.0",
 	"pydicom==2.4.1",
 ]
 
