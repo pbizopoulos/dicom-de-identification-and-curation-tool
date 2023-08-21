@@ -36,8 +36,8 @@ def main() -> None:
         retain_long_modified_dates_option,
         retain_description_option,
     ]
-    output = list(map(list, zip(*output)))  # noqa: B905
-    dicom_tag_to_nema_action = dict(zip(dicom_tags, output))  # noqa: B905
+    output = list(map(list, zip(*output)))
+    dicom_tag_to_nema_action = dict(zip(dicom_tags, output))
     dicom_tag_to_nema_action["00100010"][0] = "Z"
     dicom_tag_to_nema_action["00100020"][0] = "Z"
     file_content = (
@@ -57,7 +57,7 @@ def main() -> None:
         writer = csv.writer(file)
         writer.writerow(["Name", "Tag", "Action"])
         dicom_tag_names = df_table["Attribute Name"].to_list()
-        for (key, _), dicom_tag_name in zip(  # noqa: B905
+        for (key, _), dicom_tag_name in zip(
             dicom_tag_to_nema_action.items(),
             dicom_tag_names,
         ):
