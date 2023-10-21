@@ -43,7 +43,7 @@ def main() -> None:
     file_content = (
         f"const dicomTagToNemaActionObject = {json.dumps(dicom_tag_to_nema_action)};"
     )
-    with Path("prod/dicom-tag-to-nema-action.js").open("w", encoding="utf-8") as file:
+    with Path("prm/dicom-tag-to-nema-action.js").open("w", encoding="utf-8") as file:
         file.write(file_content)
     assert (
         sha256(file_content.encode("utf-8")).hexdigest()
