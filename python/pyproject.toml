@@ -1,16 +1,16 @@
 [project]
+dependencies = [
+  "playwright==1.36.0",
+  "pydicom==2.4.1"
+]
 name = "UNKNOWN"
 version = "0.0.0"
-dependencies = [
-	"playwright==1.36.0",
-	"pydicom==2.4.1",
-]
 
 [project.optional-dependencies]
 dev = [
-	"black==23.9.1",
-	"djlint==1.34.0",
-	"mypy==1.5.1",
-	"ruff==0.0.291",
-	"ssort==0.11.6",
+  "djlint==1.34.0",
+  "mypy==1.5.1",
+  "ruff==0.1.2",
+  "ssort==0.11.6",
+  "toml-sort==0.23.1"
 ]

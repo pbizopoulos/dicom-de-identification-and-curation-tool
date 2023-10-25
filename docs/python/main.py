@@ -8,7 +8,7 @@ import pandas as pd
 
 
 def main() -> None:
-    with request.urlopen(  # noqa: S310
+    with request.urlopen(
         "https://dicom.nema.org/medical/dicom/current/output/chtml/part15/chapter_e.html",
     ) as response:
         html = response.read()
