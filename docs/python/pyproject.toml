@@ -1,7 +1,7 @@
 [project]
 dependencies = [
   "lxml==4.9.2",
-  "pandas==2.1.1"
+  "pandas==2.1.2"
 ]
 name = "UNKNOWN"
 version = "0.0.0"
