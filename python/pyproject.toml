@@ -1,7 +1,7 @@
 [project]
 dependencies = [
-  "playwright==1.36.0",
-  "pydicom==2.4.1"
+  "playwright==1.39.0",
+  "pydicom==2.4.3"
 ]
 name = "UNKNOWN"
 version = "0.0.0"
