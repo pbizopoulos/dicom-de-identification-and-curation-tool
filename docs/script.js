@@ -1,4 +1,5 @@
 (() => {
+	const canvas = document.getElementById('canvas');
 	const dateProcessingSelect = document.getElementById(
 		"date-processing-select",
 	);
@@ -48,11 +49,57 @@
 	let fileReaderArray = [];
 	let filesNum = 0;
 	let filesSizeTotal = 0;
+	let model;
 	let sessionObject = {};
 	loadDirectoryInputFile.oninput = loadDirectoryInputFileOnInput;
 	loadSessionInputFile.oninput = loadSessionInputFileOnInput;
 	saveProcessedFilesAsZipButton.onclick = saveProcessedFilesAsZipButtonOnClick;
 	window.onload = windowOnLoad;
+
+	function deidentifyPixels(dataSet) {
+		const columns = dataSet.uint16('x00280011');
+		const rows = dataSet.uint16('x00280010');
+		bitsAllocated = dataSet.uint16('x00280100');
+		bitsStored = dataSet.uint16('x00280101');
+		shiftCount = bitsAllocated - bitsStored;
+		pixelData = dataSet.elements.x7fe00010;
+		pixelCount = pixelData.length / 2;
+		adjustedPixelData = new Uint8Array(pixelCount);
+		for (let i = 0; i < pixelCount; i++) {
+			adjustedPixelData[i] = pixelData[i] >> shiftCount;
+		}
+		canvas.width = columns;
+		canvas.height = rows;
+		imageTensorOriginal = imageTensorOriginal.expandDims(0);
+		imageTensorOriginal = imageTensorOriginal.expandDims(-1);
+		imageTensor = tf.image.resizeNearestNeighbor(imageTensorOriginal, [512, 512]);
+		imageTensor = imageTensor.expandDims(0);
+		imageTensor = tf.concat([imageTensor, imageTensor, imageTensor], -1)
+		tf.browser.toPixels(imageTensor, canvas);
+		prediction = model.predict(imageTensor.div(255));
+		prediction = tf.image.resizeNearestNeighbor(prediction, [rows, columns]);
+		// tf.browser.toPixels(prediction.squeeze(0), canvas);
+		// tf.browser.toPixels(imageTensor.squeeze(0), canvas);
+		predictionFlatten = prediction.flatten().dataSync();
+		if (dataSet.warnings.length > 0) {
+			dataSet.warnings.forEach(function(warning) {
+				console.log(warning);
+			});
+		} else {
+			const pixelElement = dataSet.elements.x7fe00010;
+			if (pixelElement) {
+				for (let i = pixelElement.dataOffset; i < predictionFlatten.length; i++) {
+					if (predictionFlatten[i] > 0.5) {
+						dataSet.byteArray[pixelElement.dataOffset + i] = 0;
+					}
+				}
+			}
+		}
+		tmp2 = tf.tensor(dataSet.byteArray.slice(dataSet.elements.x7fe00010.dataOffset), [2022, 2022, 2])
+		tmp2 = tmp2.slice([0, 0, 0], [rows, columns, 1]);
+		// tf.browser.toPixels(tmp2, canvas);
+		return dataSet;
+	}
 
 	function disableUI(argument) {
 		dateProcessingSelect.disabled = argument;
@@ -139,7 +186,9 @@
 			filesNum = values.length;
 			for (let i = 0; i < filesNum; i++) {
 				try {
-					dicomDictArray[i] = dcmjs.data.DicomMessage.readFile(values[i]);
+					dataSet = dicomParser.parseDicom(new Uint8Array(values[i]))
+					dataSetDeidentified = deidentifyPixels(dataSet);
+					dicomDictArray[i] = dcmjs.data.DicomMessage.readFile(dataSetDeidentified.byteArray.buffer);
 				} catch (e) {
 					console.log(e);
 					continue;
@@ -212,7 +261,7 @@
 									);
 									const dateWithOffset = new Date(
 										new Date(year, month, day).getTime() +
-											sessionObject[patientId].daysOffset * 24 * 60 * 60 * 1000,
+										sessionObject[patientId].daysOffset * 24 * 60 * 60 * 1000,
 									);
 									const yearWithOffset = dateWithOffset.getFullYear();
 									const monthWithOffset = (
@@ -285,7 +334,7 @@
 									dicomDictArray[i].dict[dicomTagUpperLevel].vr === "SQ" &&
 									dicomDictArray[i].dict[dicomTagUpperLevel].Value[0] &&
 									dicomTag in
-										dicomDictArray[i].dict[dicomTagUpperLevel].Value[0]
+									dicomDictArray[i].dict[dicomTagUpperLevel].Value[0]
 								) {
 									dicomDictArray[i].dict[dicomTagUpperLevel].Value[0][
 										dicomTag
@@ -340,8 +389,8 @@
 						.slice(0, -1)
 						.split("/");
 					const dicomTagValueSavePath = `${dicomTagSavePathArray
-						.map((x) => dicomDictArray[i].dict[x].Value[0])
-						.join("/")}/`;
+							.map((x) => dicomDictArray[i].dict[x].Value[0])
+							.join("/")}/`;
 					const dicomTagValueSavePathArray = dicomTagValueSavePath.split("/");
 					for (let j = 1; j < dicomTagValueSavePathArray.length; j++) {
 						zip.file(
@@ -395,5 +444,14 @@
 		document.body.style.display = "";
 	}
 
+	async function load_model() {
+		model = await tf.loadGraphModel("https://raw.githubusercontent.com/mindee/doctr-tfjs-demo/master/public/models/db_mobilenet_v2/model.json", {
+			onProgress: (fraction) => {
+				console.log(fraction);
+			},
+		});
+	}
+
+	load_model();
 	disableUI(true);
 })();
