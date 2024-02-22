@@ -62,16 +62,18 @@ class TestWebApplication(unittest.TestCase):
             download = download_info.value
             download.save_as("tmp/de-identified-files.zip")
             with Path("tmp/de-identified-files.zip").open("rb") as file:
-                assert (
+                if (
                     hashlib.sha256(file.read()).hexdigest()
-                    == "bf40ebb18b6e4767dad94c074d301b42132ebe02004bfbc7792ff3ed4bbc5642"  # noqa: E501
-                )
+                    != "bf40ebb18b6e4767dad94c074d301b42132ebe02004bfbc7792ff3ed4bbc5642"  # noqa: E501
+                ):
+                    raise AssertionError
             page.screenshot(path="tmp/screenshot.png")
             with Path("tmp/screenshot.png").open("rb") as file:
-                assert (
+                if (
                     hashlib.sha256(file.read()).hexdigest()
-                    == "07963e07e9aad3ff14ed38abbec17c4cba7df56db26938e63445a2fe997276ba"  # noqa: E501
-                )
+                    != "07963e07e9aad3ff14ed38abbec17c4cba7df56db26938e63445a2fe997276ba"  # noqa: E501
+                ):
+                    raise AssertionError
             context.close()
             browser.close()
 

@@ -45,10 +45,11 @@ def main() -> None:
     )
     with Path("prm/dicom-tag-to-nema-action.js").open("w", encoding="utf-8") as file:
         file.write(file_content)
-    assert (
+    if (
         sha256(file_content.encode("utf-8")).hexdigest()
-        == "2ba2580f38a162efc20e3e75f6c5b0defdfed6db091b5343804d712cae499df5"
-    )
+        != "2ba2580f38a162efc20e3e75f6c5b0defdfed6db091b5343804d712cae499df5"
+    ):
+        raise AssertionError
     with Path("tmp/dicom-tag-to-nema-action-default.csv").open(
         "w",
         encoding="utf-8",
