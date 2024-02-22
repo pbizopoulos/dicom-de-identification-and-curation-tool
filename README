@@ -1,0 +1,20 @@
+# DICOM de-identification and curation tool
+https://pbizopoulos.github.io/dicom-de-identification-and-curation-tool
+
+# Requirements
+POSIX Shell & Utilities
+Git
+Docker
+
+# Download
+git clone https://github.com/pbizopoulos/dicom-de-identification-and-curation-tool $HOME/github.com/pbizopoulos/dicom-de-identification-and-curation-tool
+cd $HOME/github.com/pbizopoulos/dicom-de-identification-and-curation-tool/
+
+# Development
+cd docs/python/ && make clean check all && cd ../..
+cd docs/ && make clean check all && cd ..
+cd python/ && make clean check all && cd ..
+
+# Staging
+cd docs/ && make STAGING=1
+
